@@ -1,0 +1,10 @@
+backend/.env
+backend/firebase-key.json
+**/__pycache__/
+*.pyc
+backend/data/*.json
+frontend/node_modules/
+frontend/dist/
+frontend/.env*
+.vercel
+.firebase

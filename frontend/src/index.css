@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  --bg-page: #0B0F19;
+  --bg-card: #131A2A;
+  --bg-card-alt: #192236;
+  --border-gold: rgba(212, 175, 55, 0.24);
+  --text-primary: #F8FAFC;
+  --text-muted: #94A3B8;
+  --accent-gold: #D4AF37;
+  --accent-gold-bright: #F59E0B;
+}
+
+.theme-ivory {
+  --bg-page: #FAF6EE;
+  --bg-card: #FFFFFF;
+  --bg-card-alt: #F3ECE0;
+  --border-gold: rgba(139, 30, 63, 0.22);
+  --text-primary: #1E1B18;
+  --text-muted: #5C5346;
+  --accent-gold: #8B1E3F;
+  --accent-gold-bright: #B45309;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.cosmic-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-gold);
+}
+
+.cosmic-card-alt {
+  background-color: var(--bg-card-alt);
+  border: 1px solid var(--border-gold);
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes splashFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 16s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spinReverse 12s linear infinite;
+}
+
+.animate-splash-fill {
+  animation: splashFill 4s linear forwards;
+}
