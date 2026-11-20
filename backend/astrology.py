@@ -1065,9 +1065,12 @@ async def ask_personal_jothidar(
         p in question for p in ("தொழில் வளர்ச்சி எப்படி", "திருமண காலம் மற்றும் பொருத்தம்", "என்ன பரிகாரம் சிறந்தது")
     )
 
-    if deepseek_key and not is_preset_ta and (provider == "deepseek" or not gemini_key):
+    llm_error = None
+
+    async def _call_deepseek() -> Optional[Dict[str, Any]]:
+        nonlocal llm_error
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
+            async with httpx.AsyncClient(timeout=20.0) as client:
                 resp = await client.post(
                     "https://api.deepseek.com/chat/completions",
                     headers={"Authorization": f"Bearer {deepseek_key}", "Content-Type": "application/json"},
@@ -1085,24 +1088,54 @@ async def ask_personal_jothidar(
                     text = data["choices"][0]["message"]["content"]
                     text = text.replace("**", "").replace("__", "").replace("### ", "").replace("## ", "")
                     return {"answer": text, "source": "deepseek"}
-        except Exception:
-            pass
+                llm_error = f"deepseek_{resp.status_code}"
+        except Exception as exc:
+            llm_error = f"deepseek_exc_{type(exc).__name__}"
+        return None
+
+    async def _call_gemini() -> Optional[Dict[str, Any]]:
+        nonlocal llm_error
+        endpoints = (
+            [
+                f"https://aiplatform.googleapis.com/v1/publishers/google/models/gemini-2.5-flash:generateContent?key={gemini_key}",
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}",
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}",
+            ]
+            if gemini_key.startswith("AQ.")
+            else [
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}",
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}",
+            ]
+        )
+        payload = {"contents": [{"role": "user", "parts": [{"text": f"{system_prompt}\nUser Question: {question}"}]}]}
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            for url in endpoints:
+                try:
+                    resp = await client.post(url, json=payload)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        text = data["candidates"][0]["content"]["parts"][0]["text"]
+                        text = text.replace("**", "").replace("__", "").replace("### ", "").replace("## ", "")
+                        return {"answer": text, "source": "gemini"}
+                    llm_error = f"gemini_{resp.status_code}"
+                except Exception as exc:
+                    llm_error = f"gemini_exc_{type(exc).__name__}"
+        return None
+
+    if provider == "deepseek" and deepseek_key and not is_preset_ta:
+        res = await _call_deepseek()
+        if res:
+            return res
 
     if gemini_key:
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                resp = await client.post(
-                    url,
-                    json={"contents": [{"parts": [{"text": f"{system_prompt}\nUser Question: {question}"}]}]},
-                )
-                if resp.status_code == 200:
-                    data = resp.json()
-                    text = data["candidates"][0]["content"]["parts"][0]["text"]
-                    text = text.replace("**", "").replace("__", "").replace("### ", "").replace("## ", "")
-                    return {"answer": text, "source": "gemini"}
-        except Exception:
-            pass
+        res = await _call_gemini()
+        if res:
+            return res
+
+    if deepseek_key and not is_preset_ta:
+        res = await _call_deepseek()
+        if res:
+            return res
 
     # Built-in Pulipani Siddhar + Pancha Patchi chart-aware fallback (works 100% offline/free)
     q_low = question.lower()
@@ -1149,7 +1182,7 @@ async def ask_personal_jothidar(
             "tanglish": f"Vanakkam {name}! Unga {rasi} Rasi ({nak}) & {dasa} Dasa padi: {pulipani} Ippo unga {bird_name} patchi '{patchi_cur['label'] if patchi_cur else ''}'-la irukku — {patchi_cur['advice'] if patchi_cur else ''}",
         }[lang]
 
-    return {"answer": ans, "source": "pulipani_engine"}
+    return {"answer": ans, "source": "pulipani_engine", "llm_error": llm_error}
 
 
 GOAL_META = {
