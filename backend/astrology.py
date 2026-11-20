@@ -703,16 +703,17 @@ def _compute_pulipani_palangal(
 
     # Realistic, non-cluttered Pariharam: only prescribe a focused remedy for an actual 6/8/12 challenge;
     # otherwise honestly state that no heavy pariharam is needed.
+    # Authentic Tamil Siddhar / Pulipani tradition remedies (Sannidhi, Deepam, Graha Daanam)
     SIMPLE_PRACTICE = {
-        "Sun": ("ஞாயிறு காலை 5 நிமிடம் சூரிய நமஸ்காரம்", "5 mins of morning sunlight / Surya Namaskar on Sundays", "Sunday morning 5 mins sunlight"),
-        "Moon": ("திங்கள் அல்லது பௌர்ணமி நாளில் தாயார் / பெரியோர் ஆசி", "respecting elders & staying hydrated on Mondays", "Monday/Pournami elders-kitta aasi"),
-        "Mars": ("செவ்வாய் அன்று கோபத்தைக் கட்டுப்படுத்தி நிதானம் காத்தல்", "practicing calm patience on Tuesdays", "Tuesday kovam control & patience"),
-        "Mercury": ("புதன் அன்று மாணவர்கள் அல்லது இளையோருக்கு வழிகாட்டுதல்", "mentoring or gifting a book on Wednesdays", "Wednesday students/youngsters-ku help"),
-        "Jupiter": ("வியாழன் அன்று குரு / ஆசிரியரை நினைவுகூர்தல்", "expressing gratitude to a mentor/teacher on Thursdays", "Thursday guru/mentor-ku gratitude"),
-        "Venus": ("வெள்ளி அன்று வீடு/பணி இடத்தை சுத்தமாக வைத்தல்", "keeping your space neat & harmonious on Fridays", "Friday workspace/home clean-aa vaikkuradhu"),
-        "Saturn": ("சனி அன்று உழைப்பாளிகளுக்கு மரியாதையும் சிறு உதவியும்", "helping an elderly person or worker on Saturdays", "Saturday workers/elders-ku small help"),
-        "Rahu": ("கவனம் சிதறாமல் தியானம் அல்லது மூச்சுப் பயிற்சி", "10 mins of quiet breathing to avoid overthinking", "Daily 10 mins breathing/focus (no overthinking)"),
-        "Ketu": ("தினமும் 5 நிமிடம் மௌன தியானம்", "5 mins of silent reflection daily", "Daily 5 mins silent reflection"),
+        "Sun": ("ஞாயிறு அன்று சிவன் சந்நிதியில் நெய் தீபம் & கோதுமை தானம்", "Sunday Shiva temple ghee lamp & wheat daanam", "Sunday Shiva sannidhi nei deepam & wheat daanam"),
+        "Moon": ("பௌர்ணமி / திங்கள் அன்று அம்மன் சந்நிதியில் அபிஷேகம் & அன்னதானம்", "Monday/Pournami Amman sannidhi abhishekam & annadanam", "Monday/Pournami Amman sannidhi abhishekam & annadanam"),
+        "Mars": ("செவ்வாய் அன்று பழனி தண்டாயுதபாணி / முருகன் சந்நிதியில் செவ்வரளி அர்ச்சனை & துவரை தானம்", "Tuesday Palani Murugan / Dhandayuthapani worship & red gram daanam", "Tuesday Murugan / Palani Dhandayuthapani sannidhi archana & thuvarai daanam"),
+        "Mercury": ("புதன் அன்று பெருமாள் சந்நிதியில் துளசி அர்ச்சனை & பச்சைப் பயறு தானம்", "Wednesday Perumal sannidhi Tulsi archana & green gram daanam", "Wednesday Perumal sannidhi Tulsi archana & pachai payaru daanam"),
+        "Jupiter": ("வியாழன் அன்று தட்சிணாமூர்த்தி / சித்தர் சந்நிதியில் நெய் தீபம் & கொண்டைக்கடலை தானம்", "Thursday Dakshinamurthy / Siddhar sannidhi ghee lamp & chickpea daanam", "Thursday Dakshinamurthy / Siddhar sannidhi nei deepam & kondakadalai daanam"),
+        "Venus": ("வெள்ளி அன்று மகாலட்சுமி சந்நிதியில் நெய் தீபம் & மொச்சை தானம்", "Friday Mahalakshmi sannidhi ghee lamp & white bean daanam", "Friday Mahalakshmi sannidhi nei deepam & mochai daanam"),
+        "Saturn": ("சனி அன்று எள் எண்ணெய் தீபம் ஏற்றி எள் சாதம் / அன்னதானம்", "Saturday sesame oil lamp & annadanam", "Saturday ellu ennai deepam & annadanam"),
+        "Rahu": ("ராகு காலத்தில் துர்க்கை அம்மன் சந்நிதியில் எலுமிச்சை தீபம் & உளுந்து தானம்", "Rahu Kalam Durga sannidhi lemon lamp & black gram daanam", "Rahu Kalam Durga sannidhi lemon deepam & ulundhu daanam"),
+        "Ketu": ("விநாயகர் சந்நிதியில் அருகம்புல் அர்ச்சனை & கொள்ளு தானம்", "Ganesha sannidhi Arugampul archana & horse gram daanam", "Vinayagar sannidhi arugampul archana & kollu daanam"),
     }
 
     bhukti_h = pos.get(bhukti_key, 1)
@@ -1052,12 +1053,15 @@ async def ask_personal_jothidar(
         else "Respond in natural, friendly Tanglish (Tamil written in English letters) like a caring personal Tamil astrologer."
     )
     system_prompt = (
-        f"You are 'Enathu Jothidar' (Personal Tamil Astrologer) trained in Pulipani Siddhar Jothidam and Pancha Patchi Saasthiram. "
+        f"You are 'Enathu Jothidar', a warm, experienced human Tamil Jothidar grounded in Pulipani Siddhar's Sothidam Munnooru and Pancha Patchi Saasthiram. "
         f"{lang_instruction} Do NOT use markdown bold/italics (no ** or * or #). "
-        f"STRICT ASTROLOGY FACTS (never contradict these):\n"
-        f"- Pancha Patchi states: Arasu = BEST/Peak power, Oon = GOOD/Productive, Nadai = Moderate/Neutral, Thuyil = Weak/Low energy, Saavu = CAUTION/Bad.\n"
-        f"- NEVER say Arasu or Oon is bad/inauspicious. NEVER invent 'Dasa Sandhi' unless Maha Dasa ends within 6 months. NEVER invent fake remedies like 'charity for a bird'.\n"
-        f"Directly answer the user's specific question in 4-5 concise sentences, grounded ONLY in the exact chart & Jamam data below:\n"
+        f"CONVERSATION & ACCURACY RULES:\n"
+        f"- Answer ONLY what the user actually asked, naturally like a real Jothidar — do NOT dump their full Lagnam/Rasi/Nakshatram/Pancha Patchi timings unless directly needed for their question.\n"
+        f"- Pulipani Siddhar's main Ashram & Jeeva Samadhi is in Palani (பழனி — வையாபுரி குளம் அருகே, போகர் சித்தர் பரம்பரை). Never invent dedicated Pulipani temples in other cities if unsure.\n"
+        f"- When giving Pariharam, give ONLY traditional Tamil Siddhar / Pulipani remedies (temple Sannidhi, Deepam, Abhishekam, Graha Daanam) — never generic modern habits or fake remedies like 'charity for a bird'.\n"
+        f"- Pancha Patchi states: Arasu = BEST/Peak power, Oon = GOOD/Productive, Nadai = Moderate/Neutral, Thuyil = Weak/Low energy, Saavu = CAUTION/Bad. Never say Arasu or Oon is bad.\n"
+        f"- NEVER invent 'Dasa Sandhi' unless Maha Dasa ends within 6 months.\n"
+        f"User Chart Context (use only what is relevant to the question):\n"
         f"{chart_summary}\n{patchi_summary}"
     )
 
