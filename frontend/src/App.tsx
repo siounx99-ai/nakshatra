@@ -421,7 +421,7 @@ export function App() {
 
           <button
             onClick={() => setShowSplash(false)}
-            className="mt-5 text-[11px] text-[#94A3B8] hover:text-[#D4AF37] transition"
+            className="mt-5 text-[13px] text-[#94A3B8] hover:text-[#D4AF37] transition"
           >
             Skip →
           </button>
@@ -437,13 +437,13 @@ export function App() {
             </div>
             <div>
               <h1 className="text-base font-bold leading-tight text-[var(--accent-gold)]">{t.appTitle}</h1>
-              <p className="text-[11px] text-[var(--text-muted)]">{t.appSubtitle}</p>
+              <p className="text-[13px] text-[var(--text-muted)]">{t.appSubtitle}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5">
             {/* 3-Way Language Toggle */}
-            <div className="flex rounded-lg p-0.5 cosmic-card text-[11px] font-medium">
+            <div className="flex rounded-lg p-0.5 cosmic-card text-[13px] font-medium">
               {(['ta', 'en', 'tanglish'] as Lang[]).map((l) => (
                 <button
                   key={l}
@@ -484,7 +484,7 @@ export function App() {
 
             <form onSubmit={handleCompleteOnboarding} className="space-y-3 text-xs">
               <div>
-                <label className="text-[11px] text-[var(--text-muted)]">{t.nameLabel}</label>
+                <label className="text-[13px] text-[var(--text-muted)]">{t.nameLabel}</label>
                 <input
                   required
                   value={profile.name}
@@ -496,7 +496,7 @@ export function App() {
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.dobLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.dobLabel}</label>
                   <input
                     required
                     type="date"
@@ -506,7 +506,7 @@ export function App() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.tobLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.tobLabel}</label>
                   <input
                     required
                     type="time"
@@ -519,7 +519,7 @@ export function App() {
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.cityLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.cityLabel}</label>
                   <select
                     value={profile.city}
                     onChange={(e) => {
@@ -536,7 +536,7 @@ export function App() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.ayanamsaLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.ayanamsaLabel}</label>
                   <select
                     value={profile.ayanamsa}
                     onChange={(e) => setProfile({ ...profile, ayanamsa: e.target.value as 'lahiri' | 'raman' | 'kp' })}
@@ -573,14 +573,14 @@ export function App() {
                 </div>
                 <div className="text-right space-y-1">
                   {jathagam && (
-                    <span className="inline-block text-[11px] px-2.5 py-1 rounded-full bg-[#D4AF37]/15 text-[var(--accent-gold)] border border-[var(--border-gold)] font-medium">
+                    <span className="inline-block text-[13px] px-2.5 py-1 rounded-full bg-[#D4AF37]/15 text-[var(--accent-gold)] border border-[var(--border-gold)] font-medium">
                       {jathagam.rasi.name} · {jathagam.nakshatram.name}
                     </span>
                   )}
                   <div>
                     <button
                       onClick={() => setIsOnboarded(false)}
-                      className="text-[11px] text-[var(--text-muted)] underline hover:text-[var(--accent-gold)]"
+                      className="text-[13px] text-[var(--text-muted)] underline hover:text-[var(--accent-gold)]"
                     >
                       {t.editProfileBtn}
                     </button>
@@ -610,7 +610,7 @@ export function App() {
                     <span>{panchangam.pancha_patchi.bird.emoji}</span>
                     {t.patchiTitle}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[10px]">
+                  <div className="flex items-center gap-1.5 text-[12px]">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       {nowTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -637,7 +637,7 @@ export function App() {
                   return (
                     <div className="cosmic-card-alt rounded-xl p-3.5 space-y-2.5">
                       <div>
-                        <p className="text-[11px] text-[var(--text-muted)]">{t.patchiBird}</p>
+                        <p className="text-[13px] text-[var(--text-muted)]">{t.patchiBird}</p>
                         <p className="text-lg font-bold">{panchangam.pancha_patchi.bird.name}</p>
                       </div>
 
@@ -652,7 +652,7 @@ export function App() {
                             {panchangam.pancha_patchi.current.label}
                           </span>
                           <div className="text-right leading-tight">
-                            <p className="text-[10px] text-[var(--text-muted)]">Time remaining</p>
+                            <p className="text-[12px] text-[var(--text-muted)]">Time remaining</p>
                             <p className="text-base font-mono font-bold tabular-nums text-[var(--accent-gold)]">
                               {jamamProg.remainingText}
                             </p>
@@ -670,21 +670,21 @@ export function App() {
                       <p className="text-xs leading-relaxed">{panchangam.pancha_patchi.current.advice}</p>
 
                   {/* Now / Next / Best Upcoming Summary */}
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--border-gold)] text-[11px]">
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--border-gold)] text-[13px]">
                     <div className="p-2 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30">
-                      <p className="text-[10px] text-[var(--accent-gold)] font-semibold uppercase">{t.patchiNowLabel}</p>
+                      <p className="text-[12px] text-[var(--accent-gold)] font-semibold uppercase">{t.patchiNowLabel}</p>
                       <p className="font-bold mt-0.5">{panchangam.pancha_patchi.current.state}</p>
-                      <p className="text-[10px] text-[var(--text-muted)]">{panchangam.pancha_patchi.current.start}</p>
+                      <p className="text-[12px] text-[var(--text-muted)]">{panchangam.pancha_patchi.current.start}</p>
                     </div>
                     <div className="p-2 rounded-lg cosmic-card border border-[var(--border-gold)]">
-                      <p className="text-[10px] text-[var(--text-muted)] font-semibold uppercase">{t.patchiNextLabel}</p>
+                      <p className="text-[12px] text-[var(--text-muted)] font-semibold uppercase">{t.patchiNextLabel}</p>
                       <p className="font-bold mt-0.5">{panchangam.pancha_patchi.next_jamam.state}</p>
-                      <p className="text-[10px] text-[var(--text-muted)]">{panchangam.pancha_patchi.next_jamam.start}</p>
+                      <p className="text-[12px] text-[var(--text-muted)]">{panchangam.pancha_patchi.next_jamam.start}</p>
                     </div>
                     <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                      <p className="text-[10px] text-emerald-400 font-semibold uppercase">{t.patchiBestUpcoming}</p>
+                      <p className="text-[12px] text-emerald-400 font-semibold uppercase">{t.patchiBestUpcoming}</p>
                       <p className="font-bold text-emerald-300 mt-0.5">{panchangam.pancha_patchi.next_best.state}</p>
-                      <p className="text-[10px] text-emerald-400/80">
+                      <p className="text-[12px] text-emerald-400/80">
                         {panchangam.pancha_patchi.next_best.start} – {panchangam.pancha_patchi.next_best.end}
                       </p>
                     </div>
@@ -695,7 +695,7 @@ export function App() {
 
                 {/* Visual Live Timeline */}
                 <div className="space-y-1.5 pt-1">
-                  <p className="text-[11px] font-semibold text-[var(--text-muted)]">{t.patchiTimelineTitle}</p>
+                  <p className="text-[13px] font-semibold text-[var(--text-muted)]">{t.patchiTimelineTitle}</p>
                   <div className="relative pl-4 space-y-2 border-l-2 border-[#D4AF37]/30 ml-2">
                     {panchangam.pancha_patchi.timeline.map((jm, idx) => {
                       const isBest = jm.state === 'Arasu';
@@ -715,11 +715,11 @@ export function App() {
                               {jm.is_current ? `${t.patchiNowLabel}: ` : idx === 1 ? `${t.patchiNextLabel}: ` : ''}
                               {jm.start} – {jm.end}
                             </span>
-                            <span className="ml-1.5 text-[10px] text-[var(--text-muted)]">
+                            <span className="ml-1.5 text-[12px] text-[var(--text-muted)]">
                               ({jm.period === 'night' ? 'Night' : 'Day'} {jm.jamam})
                             </span>
                           </div>
-                          <span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${patchiToneClasses(jm.tone)}`}>
+                          <span className={`shrink-0 px-2 py-0.5 rounded-full text-[12px] font-semibold border ${patchiToneClasses(jm.tone)}`}>
                             {jm.label}
                           </span>
                         </div>
@@ -747,7 +747,7 @@ export function App() {
                         <span className="text-[var(--text-muted)]">
                           Day {jm.jamam}: {jm.start} – {jm.end}
                         </span>
-                        <span className={`px-2 py-0.5 rounded-full text-[11px] border ${patchiToneClasses(jm.tone)}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[13px] border ${patchiToneClasses(jm.tone)}`}>
                           {jm.state}
                         </span>
                       </div>
@@ -762,7 +762,7 @@ export function App() {
                         <span className="text-[var(--text-muted)]">
                           Night {jm.jamam}: {jm.start} – {jm.end}
                         </span>
-                        <span className={`px-2 py-0.5 rounded-full text-[11px] border ${patchiToneClasses(jm.tone)}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[13px] border ${patchiToneClasses(jm.tone)}`}>
                           {jm.state}
                         </span>
                       </div>
@@ -780,26 +780,26 @@ export function App() {
                     <Calendar className="w-4 h-4" />
                     {t.panchangamTitle}
                   </h3>
-                  <span className="text-[11px] text-[var(--text-muted)]">
+                  <span className="text-[13px] text-[var(--text-muted)]">
                     ☀ {panchangam.sunrise} · 🌇 {panchangam.sunset}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5 text-xs">
                   <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                    <p className="text-[11px] text-emerald-400 font-semibold">{t.nallaNeram}</p>
+                    <p className="text-[13px] text-emerald-400 font-semibold">{t.nallaNeram}</p>
                     <p className="font-bold mt-0.5">{panchangam.nalla_neram}</p>
                   </div>
                   <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/30">
-                    <p className="text-[11px] text-orange-400 font-semibold">{t.rahuKalam}</p>
+                    <p className="text-[13px] text-orange-400 font-semibold">{t.rahuKalam}</p>
                     <p className="font-bold mt-0.5">{panchangam.rahu_kalam}</p>
                   </div>
                   <div className="p-2.5 rounded-xl cosmic-card-alt">
-                    <p className="text-[11px] text-[var(--text-muted)]">{t.yemagandam}</p>
+                    <p className="text-[13px] text-[var(--text-muted)]">{t.yemagandam}</p>
                     <p className="font-semibold mt-0.5">{panchangam.yemagandam}</p>
                   </div>
                   <div className="p-2.5 rounded-xl cosmic-card-alt">
-                    <p className="text-[11px] text-[var(--text-muted)]">{t.todayStar}</p>
+                    <p className="text-[13px] text-[var(--text-muted)]">{t.todayStar}</p>
                     <p className="font-semibold mt-0.5">
                       {panchangam.nakshatram.name} (P{panchangam.nakshatram.pada})
                     </p>
@@ -815,7 +815,7 @@ export function App() {
                   <h3 className="text-sm font-bold text-[var(--accent-gold)]">{t.personalPalanTitle}</h3>
                   {panchangam.personal_palan && (
                     <span
-                      className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                      className={`shrink-0 text-[12px] font-semibold px-2 py-0.5 rounded-full border ${
                         panchangam.personal_palan.tara_balam.good
                           ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
                           : 'bg-amber-500/15 text-amber-400 border-amber-500/40'
@@ -829,18 +829,18 @@ export function App() {
                 {panchangam.personal_palan && (
                   <div className="p-3.5 rounded-xl cosmic-card-alt space-y-2.5 text-xs">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[var(--accent-gold)] border border-[var(--border-gold)] text-[10px] font-semibold">
+                      <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[var(--accent-gold)] border border-[var(--border-gold)] text-[12px] font-semibold">
                         {panchangam.personal_palan.age_rule_note}
                       </span>
                       {panchangam.personal_palan.dasa_summary && (
-                        <span className="px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold">
+                        <span className="px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[12px] font-semibold">
                           Dasa: {panchangam.personal_palan.dasa_summary}
                         </span>
                       )}
                     </div>
 
                     {panchangam.personal_palan.transit_notes && panchangam.personal_palan.transit_notes.length > 0 && (
-                      <div className="p-2.5 rounded-lg cosmic-card space-y-1 text-[11px] border border-[var(--border-gold)]">
+                      <div className="p-2.5 rounded-lg cosmic-card space-y-1 text-[13px] border border-[var(--border-gold)]">
                         {panchangam.personal_palan.transit_notes.map((note, idx) => (
                           <p key={idx} className="leading-snug text-[var(--text-primary)]">
                             • {note}
@@ -849,13 +849,31 @@ export function App() {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="grid grid-cols-2 gap-2 text-[13px]">
                       <div className="p-2 rounded-lg cosmic-card">
-                        <p className="text-[10px] text-[var(--text-muted)]">Tara Balam</p>
+                        <p className="text-[12px] text-[var(--text-muted)]">Tara Balam</p>
                         <p className="font-bold mt-0.5">{panchangam.personal_palan.tara_balam.name}</p>
+                        {panchangam.personal_palan.tara_balam.valid_till && (
+                          <div className="mt-1.5 pt-1.5 border-t border-[var(--border-gold)] space-y-0.5 text-[12px]">
+                            {panchangam.personal_palan.tara_balam.valid_from && (
+                              <p className="text-[var(--text-muted)]">
+                                {lang === 'ta' ? 'தொடக்கம்: ' : 'Starts: '}
+                                <span className="text-[var(--text-primary)] font-medium">
+                                  {panchangam.personal_palan.tara_balam.valid_from}
+                                </span>
+                              </p>
+                            )}
+                            <p className="text-[var(--text-muted)]">
+                              {lang === 'ta' ? 'முடிவு: ' : 'Ends: '}
+                              <span className="text-[var(--accent-gold)] font-medium">
+                                {panchangam.personal_palan.tara_balam.valid_till}
+                              </span>
+                            </p>
+                          </div>
+                        )}
                       </div>
                       <div className="p-2 rounded-lg cosmic-card">
-                        <p className="text-[10px] text-[var(--text-muted)]">Moon Transit</p>
+                        <p className="text-[12px] text-[var(--text-muted)]">Moon Transit</p>
                         <p className="font-bold mt-0.5">
                           Rasi H{panchangam.personal_palan.rasi_house} · Lagnam H{panchangam.personal_palan.lagnam_house}
                         </p>
@@ -865,9 +883,17 @@ export function App() {
                     <p className="text-sm font-semibold leading-snug text-[var(--text-primary)]">
                       {panchangam.personal_palan.headline}
                     </p>
-                    <p className="leading-relaxed text-[var(--text-muted)]">
-                      {panchangam.personal_palan.action_advice}
-                    </p>
+                    {panchangam.personal_palan.daily_details && panchangam.personal_palan.daily_details.length > 0 ? (
+                      <div className="space-y-1.5 leading-relaxed text-[var(--text-muted)]">
+                        {panchangam.personal_palan.daily_details.map((line, idx) => (
+                          <p key={idx}>{line}</p>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="leading-relaxed text-[var(--text-muted)]">
+                        {panchangam.personal_palan.action_advice}
+                      </p>
+                    )}
 
                     <button
                       onClick={() =>
@@ -885,7 +911,7 @@ export function App() {
 
                 {/* Secondary: Check Another Rasi */}
                 <div className="pt-2 border-t border-[var(--border-gold)] flex items-center justify-between gap-2 text-xs">
-                  <span className="text-[11px] text-[var(--text-muted)]">{t.otherRasiCheck}</span>
+                  <span className="text-[13px] text-[var(--text-muted)]">{t.otherRasiCheck}</span>
                   <select
                     value={selectedRasiIdx}
                     onChange={(e) => setSelectedRasiIdx(Number(e.target.value))}
@@ -914,7 +940,7 @@ export function App() {
 
               <div className="grid grid-cols-2 gap-2.5 text-xs">
                 <div className="col-span-2">
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.nameLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.nameLabel}</label>
                   <input
                     value={profile.name}
                     onChange={(e) => setProfile({ ...profile, name: e.target.value })}
@@ -922,7 +948,7 @@ export function App() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.dobLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.dobLabel}</label>
                   <input
                     type="date"
                     value={profile.dob}
@@ -931,7 +957,7 @@ export function App() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.tobLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.tobLabel}</label>
                   <input
                     type="time"
                     value={profile.tob}
@@ -940,7 +966,7 @@ export function App() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.cityLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.cityLabel}</label>
                   <select
                     value={profile.city}
                     onChange={(e) => {
@@ -957,7 +983,7 @@ export function App() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] text-[var(--text-muted)]">{t.ayanamsaLabel}</label>
+                  <label className="text-[13px] text-[var(--text-muted)]">{t.ayanamsaLabel}</label>
                   <select
                     value={profile.ayanamsa}
                     onChange={(e) => setProfile({ ...profile, ayanamsa: e.target.value as 'lahiri' | 'raman' | 'kp' })}
@@ -995,7 +1021,7 @@ export function App() {
                 <section className="cosmic-card rounded-2xl p-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-[var(--accent-gold)]">{t.codeTitle}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
+                    <span className="text-[12px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
                       {jathagam.privacy_mode ? 'Privacy ON' : 'Public'}
                     </span>
                   </div>
@@ -1027,7 +1053,7 @@ export function App() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-[11px] text-[var(--text-muted)]">{t.codeDesc}</p>
+                  <p className="text-[13px] text-[var(--text-muted)]">{t.codeDesc}</p>
                 </section>
 
                 {/* Borderline Alert & Manual Paper Jathagam Override */}
@@ -1060,7 +1086,7 @@ export function App() {
                     </div>
                     <button
                       onClick={() => setShowOverride(!showOverride)}
-                      className="text-[11px] text-[var(--accent-gold)] underline"
+                      className="text-[13px] text-[var(--accent-gold)] underline"
                     >
                       {t.overrideBtn}
                     </button>
@@ -1070,7 +1096,7 @@ export function App() {
                     <div className="p-3 rounded-xl cosmic-card-alt space-y-2 text-xs">
                       <div className="grid grid-cols-3 gap-2">
                         <div>
-                          <label className="text-[10px] text-[var(--text-muted)]">Lagnam</label>
+                          <label className="text-[12px] text-[var(--text-muted)]">Lagnam</label>
                           <select
                             value={profile.overrideLagnamIdx ?? jathagam.lagnam.idx}
                             onChange={(e) => setProfile({ ...profile, overrideLagnamIdx: Number(e.target.value) })}
@@ -1084,7 +1110,7 @@ export function App() {
                           </select>
                         </div>
                         <div>
-                          <label className="text-[10px] text-[var(--text-muted)]">Rasi</label>
+                          <label className="text-[12px] text-[var(--text-muted)]">Rasi</label>
                           <select
                             value={profile.overrideRasiIdx ?? jathagam.rasi.idx}
                             onChange={(e) => setProfile({ ...profile, overrideRasiIdx: Number(e.target.value) })}
@@ -1098,7 +1124,7 @@ export function App() {
                           </select>
                         </div>
                         <div>
-                          <label className="text-[10px] text-[var(--text-muted)]">Nakshatram</label>
+                          <label className="text-[12px] text-[var(--text-muted)]">Nakshatram</label>
                           <select
                             value={profile.overrideNakIdx ?? jathagam.nakshatram.idx}
                             onChange={(e) => setProfile({ ...profile, overrideNakIdx: Number(e.target.value) })}
@@ -1157,7 +1183,7 @@ export function App() {
                           {jathagam.dasa.maha} / {jathagam.dasa.bhukti}{jathagam.dasa.anthar ? ` / ${jathagam.dasa.anthar}` : ''} ({jathagam.dasa.years_remaining}y)
                         </span>
                         {jathagam.dasa.maha_end && (
-                          <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
+                          <p className="text-[12px] text-[var(--text-muted)] mt-0.5">
                             Maha Dasa till {jathagam.dasa.maha_end} · Bhukti till {jathagam.dasa.bhukti_end} · Anthar till {jathagam.dasa.anthar_end}
                           </p>
                         )}
@@ -1376,7 +1402,7 @@ export function App() {
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-lg font-bold text-[var(--accent-gold)]">{goalResult.score}%</span>
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                      className={`px-2.5 py-0.5 rounded-full text-[13px] font-semibold border ${
                         goalResult.verdict_code === 'go'
                           ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
                           : goalResult.verdict_code === 'time_it'
@@ -1405,7 +1431,7 @@ export function App() {
                 <button
                   key={q}
                   onClick={() => handleAskJothidar(q)}
-                  className="text-[11px] px-2.5 py-1.5 rounded-full cosmic-card-alt text-[var(--accent-gold)] border border-[var(--border-gold)] hover:bg-[#D4AF37]/15 text-left"
+                  className="text-[13px] px-2.5 py-1.5 rounded-full cosmic-card-alt text-[var(--accent-gold)] border border-[var(--border-gold)] hover:bg-[#D4AF37]/15 text-left"
                 >
                   {q}
                 </button>
@@ -1482,7 +1508,7 @@ export function App() {
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`flex flex-col items-center justify-center py-1 rounded-xl text-[11px] transition ${
+              className={`flex flex-col items-center justify-center py-1 rounded-xl text-[13px] transition ${
                 tab === id ? 'text-[#D4AF37] font-bold bg-[#D4AF37]/10' : 'text-[var(--text-muted)]'
               }`}
             >

@@ -75,6 +75,19 @@ def _jd_to_local_str(jd_ut: float, tz_offset: float) -> str:
     return f"{disp_h:02d}:{mm:02d} {suffix}"
 
 
+def _jd_to_local_dt_str(jd_ut: float, tz_offset: float, ref_date_str: str) -> str:
+    y, m, d, ut_h = swe.revjul(jd_ut + tz_offset / 24.0)
+    total_mins = int(round(ut_h * 60))
+    extra_days, total_mins = divmod(total_mins, 1440)
+    local_dt = dt.datetime(int(y), int(m), int(d)) + dt.timedelta(days=extra_days)
+    hh = total_mins // 60
+    mm = total_mins % 60
+    suffix = "AM" if hh < 12 else "PM"
+    disp_h = hh % 12 or 12
+    time_part = f"{disp_h:02d}:{mm:02d} {suffix}"
+    return f"{local_dt.strftime('%d %b')}, {time_part}"
+
+
 def _format_minutes_to_str(minutes_from_midnight: float) -> str:
     total_mins = int(round(minutes_from_midnight)) % 1440
     hh = total_mins // 60
@@ -327,12 +340,20 @@ def calculate_panchangam(
 
     # Sun & Moon sidereal longitudes at current time
     sun_lon = swe.calc_ut(now_jd, swe.SUN, swe.FLG_SIDEREAL)[0][0] % 360.0
-    moon_lon = swe.calc_ut(now_jd, swe.MOON, swe.FLG_SIDEREAL)[0][0] % 360.0
+    moon_res = swe.calc_ut(now_jd, swe.MOON, swe.FLG_SIDEREAL | swe.FLG_SPEED)[0]
+    moon_lon = moon_res[0] % 360.0
+    moon_speed = max(10.0, float(moon_res[3]))
 
     moon_rasi_idx = int(moon_lon // 30.0) % 12
     nak_span = 360.0 / 27.0
     moon_nak_idx = int(moon_lon // nak_span) % 27
     moon_pada = int((moon_lon % nak_span) // (nak_span / 4.0)) + 1
+    deg_since_nak_start = moon_lon - (moon_nak_idx * nak_span)
+    nak_start_jd = now_jd - (deg_since_nak_start / moon_speed)
+    tara_valid_from = _jd_to_local_dt_str(nak_start_jd, tz_offset, date_str)
+    deg_to_next_nak = ((moon_nak_idx + 1) * nak_span) - moon_lon
+    nak_end_jd = now_jd + (deg_to_next_nak / moon_speed)
+    tara_valid_till = _jd_to_local_dt_str(nak_end_jd, tz_offset, date_str)
 
     diff = (moon_lon - sun_lon) % 360.0
     is_valarpirai = diff < 180.0
@@ -470,6 +491,62 @@ def calculate_panchangam(
                 "tanglish": f"Dasa Lord ({user_dasa.get('maha')}) innaikku H{d_tr_house}-la irukku{natal_house_str}" + (" — Natal chart-oda exact sync!" if same_as_natal else ""),
             }[lang])
 
+        next_best_win = f"{pancha_patchi['next_best']['start']} – {pancha_patchi['next_best']['end']}"
+        if is_user_chandrashtamam:
+            daily_details = [
+                {
+                    "ta": "💼 தொழில் & பணம்: இன்று புதிய முதலீடு, கடன் அல்லது முக்கிய ஒப்பந்தங்களில் கையெழுத்திடுவதைத் தவிர்க்கவும்; நிலுவை வேலைகளை மட்டும் முடிக்கவும்.",
+                    "en": "💼 Work & Money: Postpone new investments, loans, or signing key contracts today; focus on wrapping up pending tasks.",
+                    "tanglish": "💼 Work & Money: Puthu investment, loan or agreement sign panradha innaikku avoid pannunga; pending work mattum mudinga.",
+                }[lang],
+                {
+                    "ta": "🤝 பேச்சு & உறவு: சந்திராஷ்டமம் என்பதால் மன அழுத்தம் வரலாம் — குடும்பம் மற்றும் சக ஊழியர்களிடம் வாக்குவாதத்தைத் தவிர்க்கவும்.",
+                    "en": "🤝 People & Mind: Chandrashtamam can trigger impatience — keep conversations calm with family and colleagues.",
+                    "tanglish": "🤝 People & Mind: Chandrashtamam irukkuradhala mood swing varalam — family & office-la arguments avoid pannunga.",
+                }[lang],
+                {
+                    "ta": f"🕒 நேரம்: {tara_valid_till} வரை நிதானம் காத்து, அவசியமான பணிகளை மட்டும் {next_best_win} நேரத்தில் செய்யுங்கள்.",
+                    "en": f"🕒 Timing: Stay patient until {tara_valid_till}; handle only essential tasks during {next_best_win}.",
+                    "tanglish": f"🕒 Timing: {tara_valid_till} varaikum calm-aa irunga; must-do work mattum {next_best_win}-la pannunga.",
+                }[lang],
+            ]
+        elif tara["good"] and primary_house in (1, 2, 3, 5, 6, 7, 9, 10, 11):
+            daily_details = [
+                {
+                    "ta": f"💼 தொழில் & பணம்: {primary_house}-ம் இட சந்திரனும் {tara['ta']} இணைவதால் புதிய முயற்சிகள், பணப் பேச்சுவார்த்தை மற்றும் வாடிக்கையாளர் சந்திப்புகள் கைகூடும்.",
+                    "en": f"💼 Work & Money: Moon in H{primary_house} + {tara['en']} strongly favor pitches, financial talks, and new initiatives.",
+                    "tanglish": f"💼 Work & Money: H{primary_house} transit + {tara['tanglish']} super-aa irukku — client calls, money talks & new steps edukkalam.",
+                }[lang],
+                {
+                    "ta": "🤝 பேச்சு & உறவு: உங்கள் கருத்திற்கு நல்ல வரவேற்பு கிடைக்கும்; நண்பர்கள் அல்லது பெரியோர்களின் ஆலோசனை உதவும்.",
+                    "en": "🤝 People & Mind: Clear communication wins support today; mentors and allies back your ideas.",
+                    "tanglish": "🤝 People & Mind: Unga words-ku nalla value irukkum; friends & elders support kedaikkum.",
+                }[lang],
+                {
+                    "ta": f"✅ சிறந்த நேரம்: {tara_valid_till} வரை இந்த நற்பலன் தொடரும். முக்கிய செயல்களை {next_best_win} (அரசு/ஊண்) நேரத்தில் தொடங்குங்கள்.",
+                    "en": f"✅ Best Action: This supportive Tara holds until {tara_valid_till}. Start key moves in {next_best_win}.",
+                    "tanglish": f"✅ Best Action: {tara_valid_till} varaikum indha good Tara irukku — main work-a {next_best_win}-la start pannunga.",
+                }[lang],
+            ]
+        else:
+            daily_details = [
+                {
+                    "ta": f"💼 தொழில் & பணம்: {primary_house}-ம் இட சஞ்சாரமும் {tara['ta']} இருப்பதால் ஆவணங்களை இருமுறை சரிபார்த்து, செலவுகளைக் கட்டுப்படுத்தவும்.",
+                    "en": f"💼 Work & Money: With Moon in H{primary_house} and {tara['en']}, double-check documents and avoid impulse spending.",
+                    "tanglish": f"💼 Work & Money: H{primary_house} & {tara['tanglish']} irukkuradhala documents double-check pannunga; extra expenses control pannunga.",
+                }[lang],
+                {
+                    "ta": "🤝 பேச்சு & உறவு: அவசரப் பதில்களைத் தவிர்த்து, அமைதியாகக் கேட்டு முடிவெடுப்பது தேவையற்ற மனக்கசப்பைத் தடுக்கும்.",
+                    "en": "🤝 People & Mind: Listen calmly before reacting today to prevent avoidable misunderstandings.",
+                    "tanglish": "🤝 People & Mind: Avasarama react pannama calm-aa ketta, unnecessary misunderstanding avoid aagum.",
+                }[lang],
+                {
+                    "ta": f"🕒 மாற்றம் எப்போது?: {tara_valid_till}-க்குப் பிறகு நட்சத்திரம் மாறும். இன்று முக்கிய வேலைகளுக்கு {next_best_win} நேரத்தைப் பயன்படுத்துங்கள்.",
+                    "en": f"🕒 When it shifts: Current Tara ends at {tara_valid_till}. Use {next_best_win} for priority tasks today.",
+                    "tanglish": f"🕒 Eppo Maarum?: {tara_valid_till} apram Tara maarum. Innaikku important work-ku {next_best_win} use pannunga.",
+                }[lang],
+            ]
+
         personal_palan = {
             "primary_anchor": primary_anchor,
             "age": eff_age,
@@ -485,12 +562,15 @@ def calculate_panchangam(
                 "name": tara.get(lang, tara["en"]),
                 "score": tara["score"],
                 "good": tara["good"],
+                "valid_from": tara_valid_from,
+                "valid_till": tara_valid_till,
             },
             "rasi_house": rasi_house,
             "lagnam_house": lagnam_house,
             "primary_house": primary_house,
             "headline": house_summary,
             "action_advice": action_advice,
+            "daily_details": daily_details,
         }
 
     return {

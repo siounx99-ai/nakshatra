@@ -151,12 +151,13 @@ export interface PanchangamResponse {
     age_rule_note: string;
     dasa_summary?: string | null;
     transit_notes?: string[];
-    tara_balam: { index: number; name: string; score: number; good: boolean };
+    tara_balam: { index: number; name: string; score: number; good: boolean; valid_from?: string; valid_till?: string };
     rasi_house: number;
     lagnam_house: number;
     primary_house: number;
     headline: string;
     action_advice: string;
+    daily_details?: string[];
   } | null;
   rasi_palan: { idx: number; name: string; tone: string; is_chandrashtamam: boolean; summary: string }[];
 }

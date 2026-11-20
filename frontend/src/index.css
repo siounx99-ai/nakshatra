@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  font-size: 18px;
+}
+
 :root {
   --bg-page: #0B0F19;
   --bg-card: #131A2A;
