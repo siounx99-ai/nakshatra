@@ -26,6 +26,7 @@ from astrology_data import (
     WEEKDAY_BIRD_OFFSET_VALAR_DAY,
     WEEKDAY_BIRD_OFFSET_VALAR_NIGHT,
 )
+from pulipani_300 import get_pulipani_dignity, select_pulipani_remedy
 
 AYANAMSA_MAP = {
     "lahiri": swe.SIDM_LAHIRI,
@@ -694,50 +695,17 @@ def _compute_pulipani_palangal(
             "tanglish": f"Family Palan (Age {age_years}): 7th lord H{seventh_lord_h}-la irukku — family responsibilities-la calm-aa & open-aa pesina smooth-aa irukkum.",
         }[lang]
 
-    # 4. Active Dasa-Bhukti Palan
+    # 4. Active Dasa-Bhukti Palan (with verified Pulipani 300 planetary dignity)
+    maha_rasi_idx = next((g["rasi_idx"] for g in grahas if g["key"] == maha_key), lagnam_idx)
+    dignity = get_pulipani_dignity(maha_key, maha_rasi_idx, lang)
     dasa_effect = {
-        "ta": f"நடப்பு தசை பலன் ({dasa_info['maha_dasa']['ta']} → {dasa_info['bhukti']['ta']}): தசா நாதன் உங்கள் ஜாதகத்தில் {maha_h}-ம் இடத்தில் உள்ளதால் {dasa_info['maha_end']} வரை முக்கிய மாற்றங்களும் பொறுப்புகளும் வரும்.",
-        "en": f"Active Dasa Palan ({dasa_info['maha_dasa']['en']} → {dasa_info['bhukti']['en']}): Your Dasa lord sits in natal H{maha_h}, driving key shifts in {bhukti_key} themes until {dasa_info['maha_end']}.",
-        "tanglish": f"Active Dasa Palan ({dasa_info['maha_dasa']['tanglish']} → {dasa_info['bhukti']['tanglish']}): Dasa lord natal H{maha_h}-la irukkuradhala {dasa_info['maha_end']} varaikum puthu responsibilities & turning points varum.",
+        "ta": f"நடப்பு தசை பலன் ({dasa_info['maha_dasa']['ta']} → {dasa_info['bhukti']['ta']}): தசா நாதன் உங்கள் ஜாதகத்தில் {maha_h}-ம் இடத்தில் ({dignity['label']}) உள்ளதால் {dasa_info['maha_end']} வரை முக்கிய மாற்றங்களும் பொறுப்புகளும் வரும்.",
+        "en": f"Active Dasa Palan ({dasa_info['maha_dasa']['en']} → {dasa_info['bhukti']['en']}): Your Dasa lord sits in natal H{maha_h} ({dignity['label']}), driving key shifts in {bhukti_key} themes until {dasa_info['maha_end']}.",
+        "tanglish": f"Active Dasa Palan ({dasa_info['maha_dasa']['tanglish']} → {dasa_info['bhukti']['tanglish']}): Dasa lord natal H{maha_h}-la ({dignity['label']}) irukkuradhala {dasa_info['maha_end']} varaikum puthu responsibilities & turning points varum.",
     }[lang]
 
-    # Realistic, non-cluttered Pariharam: only prescribe a focused remedy for an actual 6/8/12 challenge;
-    # otherwise honestly state that no heavy pariharam is needed.
-    # Authentic Tamil Siddhar / Pulipani tradition remedies (Sannidhi, Deepam, Graha Daanam)
-    SIMPLE_PRACTICE = {
-        "Sun": ("ஞாயிறு அன்று சிவன் சந்நிதியில் நெய் தீபம் & கோதுமை தானம்", "Sunday Shiva temple ghee lamp & wheat daanam", "Sunday Shiva sannidhi nei deepam & wheat daanam"),
-        "Moon": ("பௌர்ணமி / திங்கள் அன்று அம்மன் சந்நிதியில் அபிஷேகம் & அன்னதானம்", "Monday/Pournami Amman sannidhi abhishekam & annadanam", "Monday/Pournami Amman sannidhi abhishekam & annadanam"),
-        "Mars": ("செவ்வாய் அன்று பழனி தண்டாயுதபாணி / முருகன் சந்நிதியில் செவ்வரளி அர்ச்சனை & துவரை தானம்", "Tuesday Palani Murugan / Dhandayuthapani worship & red gram daanam", "Tuesday Murugan / Palani Dhandayuthapani sannidhi archana & thuvarai daanam"),
-        "Mercury": ("புதன் அன்று பெருமாள் சந்நிதியில் துளசி அர்ச்சனை & பச்சைப் பயறு தானம்", "Wednesday Perumal sannidhi Tulsi archana & green gram daanam", "Wednesday Perumal sannidhi Tulsi archana & pachai payaru daanam"),
-        "Jupiter": ("வியாழன் அன்று தட்சிணாமூர்த்தி / சித்தர் சந்நிதியில் நெய் தீபம் & கொண்டைக்கடலை தானம்", "Thursday Dakshinamurthy / Siddhar sannidhi ghee lamp & chickpea daanam", "Thursday Dakshinamurthy / Siddhar sannidhi nei deepam & kondakadalai daanam"),
-        "Venus": ("வெள்ளி அன்று மகாலட்சுமி சந்நிதியில் நெய் தீபம் & மொச்சை தானம்", "Friday Mahalakshmi sannidhi ghee lamp & white bean daanam", "Friday Mahalakshmi sannidhi nei deepam & mochai daanam"),
-        "Saturn": ("சனி அன்று எள் எண்ணெய் தீபம் ஏற்றி எள் சாதம் / அன்னதானம்", "Saturday sesame oil lamp & annadanam", "Saturday ellu ennai deepam & annadanam"),
-        "Rahu": ("ராகு காலத்தில் துர்க்கை அம்மன் சந்நிதியில் எலுமிச்சை தீபம் & உளுந்து தானம்", "Rahu Kalam Durga sannidhi lemon lamp & black gram daanam", "Rahu Kalam Durga sannidhi lemon deepam & ulundhu daanam"),
-        "Ketu": ("விநாயகர் சந்நிதியில் அருகம்புல் அர்ச்சனை & கொள்ளு தானம்", "Ganesha sannidhi Arugampul archana & horse gram daanam", "Vinayagar sannidhi arugampul archana & kollu daanam"),
-    }
-
     bhukti_h = pos.get(bhukti_key, 1)
-    if maha_h in (6, 8, 12):
-        act = SIMPLE_PRACTICE.get(maha_key, SIMPLE_PRACTICE["Saturn"])
-        pariharam = {
-            "ta": f"நடைமுறை பரிகாரம்: தசா நாதன் ({dasa_info['maha_dasa']['ta']}) {maha_h}-ம் இடத்தில் உள்ளதால், {act[0]} போதும்.",
-            "en": f"Realistic Remedy: Since your Dasa lord ({dasa_info['maha_dasa']['en']}) is in H{maha_h}, simply practice {act[1]}.",
-            "tanglish": f"Practical Pariharam: Dasa lord ({dasa_info['maha_dasa']['tanglish']}) H{maha_h}-la irukkuradhala, {act[2]} pannaa podhum.",
-        }[lang]
-    elif bhukti_h in (6, 8, 12):
-        act = SIMPLE_PRACTICE.get(bhukti_key, SIMPLE_PRACTICE["Moon"])
-        pariharam = {
-            "ta": f"நடைமுறை பரிகாரம்: {dasa_info['bhukti_end']} வரை உள்ள {dasa_info['bhukti']['ta']} புத்தி ({bhukti_h}-ம் இடம்) அமைதியாகச் செல்ல, {act[0]} உதவும்.",
-            "en": f"Realistic Remedy: For your {dasa_info['bhukti']['en']} Bhukti (H{bhukti_h}, till {dasa_info['bhukti_end']}), simply practice {act[1]}.",
-            "tanglish": f"Practical Pariharam: {dasa_info['bhukti_end']} varaikum irukkara {dasa_info['bhukti']['tanglish']} Bhukti (H{bhukti_h}) smooth-aa poga {act[2]} podhum.",
-        }[lang]
-    else:
-        act = SIMPLE_PRACTICE.get(maha_key, SIMPLE_PRACTICE["Jupiter"])
-        pariharam = {
-            "ta": f"சிறப்பு பரிகாரம் தேவையில்லை: தசா ({maha_h}-ம் இடம்) & புத்தி ({bhukti_h}-ம் இடம்) நல்ல நிலையில் உள்ளன. {act[0]} தொடர்ந்தால் போதும்.",
-            "en": f"No Heavy Remedy Needed: Both Dasa (H{maha_h}) and Bhukti (H{bhukti_h}) are well-placed. Continue {act[1]}.",
-            "tanglish": f"Periya Pariharam Thevaiyilla: Dasa (H{maha_h}) & Bhukti (H{bhukti_h}) nalla irukku. Just {act[2]} continue pannunga podhum.",
-        }[lang]
+    pariharam = select_pulipani_remedy(maha_key, maha_h, bhukti_key, bhukti_h, lang)
 
     return {
         "career": career,
@@ -1058,7 +1026,7 @@ async def ask_personal_jothidar(
         f"CONVERSATION & ACCURACY RULES:\n"
         f"- Answer ONLY what the user actually asked, naturally like a real Jothidar — do NOT dump their full Lagnam/Rasi/Nakshatram/Pancha Patchi timings unless directly needed for their question.\n"
         f"- Pulipani Siddhar's main Ashram & Jeeva Samadhi is in Palani (பழனி — வையாபுரி குளம் அருகே, போகர் சித்தர் பரம்பரை). Never invent dedicated Pulipani temples in other cities if unsure.\n"
-        f"- When giving Pariharam, give ONLY traditional Tamil Siddhar / Pulipani remedies (temple Sannidhi, Deepam, Abhishekam, Graha Daanam) — never generic modern habits or fake remedies like 'charity for a bird'.\n"
+        f"- When giving Pariharam, ONLY cite the authentic remedies from Pulipani Sothidam 300: பரமன் பூசை (Paraman/Shiva Pooja), குமரி/அம்மன் பூசை (Kumari/Amman Pooja), or அரவுக்கு சாந்தி (Aravu/Rahu-Ketu Shanthi) — NEVER invent grain/dhanya lists, modern habits, or 'charity for a bird'.\n"
         f"- Pancha Patchi states: Arasu = BEST/Peak power, Oon = GOOD/Productive, Nadai = Moderate/Neutral, Thuyil = Weak/Low energy, Saavu = CAUTION/Bad. Never say Arasu or Oon is bad.\n"
         f"- NEVER invent 'Dasa Sandhi' unless Maha Dasa ends within 6 months.\n"
         f"User Chart Context (use only what is relevant to the question):\n"
