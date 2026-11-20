@@ -1015,14 +1015,36 @@ async def ask_personal_jothidar(
         night_str = ", ".join(f"{j['start']}-{j['end']}:{j['state']}" for j in pp.get("night_jamams", []))
         patchi_summary = (
             f"Pancha Patchi Bird: {pp['bird']['name']}, Current State: {pp['current']['label']}. "
-            f"Day Jamams: [{day_str}]. Night Jamams: [{night_str}]."
+            f"Today Day Jamams: [{day_str}]. Today Night Jamams: [{night_str}]."
         )
+
+        # If user asks about a specific weekday (e.g., Tuesday night), compute that exact weekday's Jamams!
+        q_l = question.lower()
+        wd_map = {
+            0: ("monday", "திங்கள்"),
+            1: ("tuesday", "செவ்வாய்"),
+            2: ("wednesday", "புதன்"),
+            3: ("thursday", "வியாழன்"),
+            4: ("friday", "வெள்ளி"),
+            5: ("saturday", "சனி"),
+            6: ("sunday", "ஞாயிறு"),
+        }
+        mentioned_wd = next((wd for wd, kws in wd_map.items() if any(k in q_l for k in kws)), None)
+        if mentioned_wd is not None and chart:
+            bird_idx = pp["bird"]["idx"]
+            is_valar = pp.get("is_valarpirai", True)
+            n_off = (WEEKDAY_BIRD_OFFSET_VALAR_NIGHT if is_valar else WEEKDAY_BIRD_OFFSET_THEI_NIGHT)[mentioned_wd]
+            d_off = (WEEKDAY_BIRD_OFFSET_VALAR_DAY if is_valar else WEEKDAY_BIRD_OFFSET_THEI_DAY)[mentioned_wd]
+            # Approximate 6:00 AM sunrise / 6:00 PM sunset Jamam slots for that weekday
+            wd_day = [f"{_format_minutes_to_str(360 + j*144)}-{_format_minutes_to_str(360 + (j+1)*144)}:{STATE_CYCLE[(bird_idx + d_off + j) % 5]}" for j in range(5)]
+            wd_night = [f"{_format_minutes_to_str(1080 + j*144)}-{_format_minutes_to_str(1080 + (j+1)*144)}:{STATE_CYCLE[(bird_idx + n_off + j) % 5]}" for j in range(5)]
+            patchi_summary += f"\nMentioned Weekday ({wd_map[mentioned_wd][0].title()}) Day: [{', '.join(wd_day)}]. Night: [{', '.join(wd_night)}]."
 
     lang_instruction = (
         "Respond in simple, everyday, grammatically accurate Tamil script (எளிய இயல்பான தமிழ்) with zero spelling mistakes. "
         "Use exact Tamil spellings: ஞாயிறு, திங்கள், செவ்வாய், புதன், வியாழன், வெள்ளி, சனி, சந்நிதி, கோவில், பரிகாரம், "
-        "கோழி, மயில், ஆந்தை, காகம், வல்லூறு, அரசு, ஊண், நடை, துயில், சாவு, அமைப்பு, "
-        "தசை, புத்தி, அந்தரம், தசா சந்தி, நவாம்சம், லக்னம், ராசி, நட்சத்திரம், பஞ்ச பட்சி, சந்திராஷ்டமம், புலிப்பாணி சித்தர். "
+        "செவ்வாய் தோஷம் (NEVER write சேவ்வை), கோழி, மயில், ஆந்தை, காகம், வல்லூறு, அரசு, ஊண், நடை, துயில், சாவு, அமைப்பு, "
+        "தசை, புத்தி, அந்தரம், நவாம்சம், லக்னம், ராசி, நட்சத்திரம், பஞ்ச பட்சி, சந்திராஷ்டமம், புலிப்பாணி சித்தர். "
         "Avoid rare or archaic words; keep sentences short and natural."
         if lang == "ta"
         else "Respond in warm, clear English with Tamil astrology terms explained."
@@ -1032,7 +1054,10 @@ async def ask_personal_jothidar(
     system_prompt = (
         f"You are 'Enathu Jothidar' (Personal Tamil Astrologer) trained in Pulipani Siddhar Jothidam and Pancha Patchi Saasthiram. "
         f"{lang_instruction} Do NOT use markdown bold/italics (no ** or * or #). "
-        f"Directly answer the user's specific question (including any time/date/incident they mention) in 4-5 concise sentences, grounded ONLY in this chart & Pancha Patchi:\n"
+        f"STRICT ASTROLOGY FACTS (never contradict these):\n"
+        f"- Pancha Patchi states: Arasu = BEST/Peak power, Oon = GOOD/Productive, Nadai = Moderate/Neutral, Thuyil = Weak/Low energy, Saavu = CAUTION/Bad.\n"
+        f"- NEVER say Arasu or Oon is bad/inauspicious. NEVER invent 'Dasa Sandhi' unless Maha Dasa ends within 6 months. NEVER invent fake remedies like 'charity for a bird'.\n"
+        f"Directly answer the user's specific question in 4-5 concise sentences, grounded ONLY in the exact chart & Jamam data below:\n"
         f"{chart_summary}\n{patchi_summary}"
     )
 
