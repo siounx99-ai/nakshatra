@@ -147,52 +147,52 @@ WEEKDAY_BIRD_OFFSET_VALAR_NIGHT = [3, 4, 0, 1, 2, 3, 4]
 WEEKDAY_BIRD_OFFSET_THEI_DAY = [2, 3, 4, 0, 1, 2, 3]
 WEEKDAY_BIRD_OFFSET_THEI_NIGHT = [4, 0, 1, 2, 3, 4, 0]
 
-# Pulipani Siddhar classical insights keyed by Maha Dasa lord
+# Traditional Tamil Vedic insights keyed by Maha Dasa lord
 PULIPANI_DASA_INSIGHTS = {
     "Jupiter": {
-        "ta": "புலிப்பாணி சித்தர் விதிப்படி, குரு தசை கல்வி, செல்வம், சுப காரியங்கள் மற்றும் ஆன்மீக உயர்வை தரும். வியாழக்கிழமை தட்சிணாமூர்த்தியை வழிபட தடைகள் நீங்கும்.",
-        "en": "Per Pulipani Siddhar's rule, Guru (Jupiter) Dasa brings wisdom, steady wealth, auspicious family events, and mentorship. Thursday prayers to Dakshinamurthy amplify results.",
-        "tanglish": "Pulipani Siddhar rule padi, ippo ungalukku Guru Dasa! Growth, nalla mentors, suba kaariyam ellam favor-aa irukkum. Thursday Dakshinamurthy/temple visit romba nalladhu.",
+        "ta": "ஜோதிட விதிப்படி, குரு தசை கல்வி, செல்வம், சுப காரியங்கள் மற்றும் ஆன்மீக உயர்வை தரும். வியாழக்கிழமை தட்சிணாமூர்த்தியை வழிபட தடைகள் நீங்கும்.",
+        "en": "In Vedic astrology, Guru (Jupiter) Dasa brings wisdom, steady wealth, auspicious family events, and mentorship. Thursday prayers to Dakshinamurthy amplify results.",
+        "tanglish": "Jothida rule padi, ippo ungalukku Guru Dasa! Growth, nalla mentors, suba kaariyam ellam favor-aa irukkum. Thursday Dakshinamurthy/temple visit romba nalladhu.",
     },
     "Saturn": {
-        "ta": "புலிப்பாணி சித்தர் வாக்குப்படி, சனி தசை பொறுமையையும் கடின உழைப்பையும் சோதித்தாலும் நிலையான வெற்றியைத் தரும். சனிக்கிழமை எள் தீபம் ஏற்றுவது சிறந்த பரிகாரம்.",
-        "en": "Per Pulipani Siddhar, Sani (Saturn) Dasa rewards patience, discipline, and long-term foundations. Lighting a sesame oil lamp on Saturdays brings calm progress.",
-        "tanglish": "Pulipani Siddhar rule padi, Sani Dasa-la shortcuts work aagadhu—aana steady hard work panna solid success kedaikkum. Saturday sesame lamp (ellu deepam) simple pariharam.",
+        "ta": "ஜோதிட விதிப்படி, சனி தசை பொறுமையையும் கடின உழைப்பையும் சோதித்தாலும் நிலையான வெற்றியைத் தரும். சனிக்கிழமை எள் தீபம் ஏற்றுவது சிறந்த பரிகாரம்.",
+        "en": "In Vedic astrology, Sani (Saturn) Dasa rewards patience, discipline, and long-term foundations. Lighting a sesame oil lamp on Saturdays brings calm progress.",
+        "tanglish": "Jothida rule padi, Sani Dasa-la shortcuts work aagadhu—aana steady hard work panna solid success kedaikkum. Saturday sesame lamp (ellu deepam) simple pariharam.",
     },
     "Venus": {
-        "ta": "புலிப்பாணி சித்தர் ஜோதிடப்படி, சுக்கிர தசை கலை, காதல், திருமணம் மற்றும் சுகபோகங்களை வளர்க்கும். வெள்ளிக்கிழமை மகாலட்சுமி வழிபாடு நலம் தரும்.",
-        "en": "Per Pulipani Siddhar, Sukkiran (Venus) Dasa elevates relationships, creativity, luxury, and marriage prospects. Friday Mahalakshmi prayers enhance harmony.",
-        "tanglish": "Pulipani Siddhar rule padi, Sukkira Dasa-la relationships, luxury, career charm ellam boost aagum! Friday Mahalakshmi prayer or white sweets daanam nalladhu.",
+        "ta": "ஜோதிட விதிப்படி, சுக்கிர தசை கலை, காதல், திருமணம் மற்றும் சுகபோகங்களை வளர்க்கும். வெள்ளிக்கிழமை மகாலட்சுமி வழிபாடு நலம் தரும்.",
+        "en": "In Vedic astrology, Sukkiran (Venus) Dasa elevates relationships, creativity, luxury, and marriage prospects. Friday Mahalakshmi prayers enhance harmony.",
+        "tanglish": "Jothida rule padi, Sukkira Dasa-la relationships, luxury, career charm ellam boost aagum! Friday Mahalakshmi prayer or white sweets daanam nalladhu.",
     },
     "Mercury": {
-        "ta": "புலிப்பாணி சித்தர் விதிப்படி, புதன் தசை வியாபாரம், பேச்சுத்திறமை, தொழில்நுட்பம் மற்றும் புத்திசாலித்தனத்தால் வெற்றியைத் தரும். புதன்கிழமை பெருமாள் வழிபாடு சிறந்தது.",
-        "en": "Per Pulipani Siddhar, Budhan (Mercury) Dasa sharpens business acumen, communication, tech skills, and finances. Wednesday Vishnu prayers bring clarity.",
-        "tanglish": "Pulipani Siddhar rule padi, Budhan Dasa business, tech career, communication-ku super period! Wednesday Perumal koil or green moong daanam nalladhu.",
+        "ta": "ஜோதிட விதிப்படி, புதன் தசை வியாபாரம், பேச்சுத்திறமை, தொழில்நுட்பம் மற்றும் புத்திசாலித்தனத்தால் வெற்றியைத் தரும். புதன்கிழமை பெருமாள் வழிபாடு சிறந்தது.",
+        "en": "In Vedic astrology, Budhan (Mercury) Dasa sharpens business acumen, communication, tech skills, and finances. Wednesday Vishnu prayers bring clarity.",
+        "tanglish": "Jothida rule padi, Budhan Dasa business, tech career, communication-ku super period! Wednesday Perumal koil or green moong daanam nalladhu.",
     },
     "Sun": {
-        "ta": "புலிப்பாணி சித்தர் வாக்குப்படி, சூரிய தசை அதிகாரம், அரசு உதவி மற்றும் தலைமைப் பண்பை உயர்த்தும். அதிகாலை சூரிய நமஸ்காரம் பலம் தரும்.",
-        "en": "Per Pulipani Siddhar, Sooriyan (Sun) Dasa strengthens leadership, recognition, and authority. Morning Surya Namaskar aligns your vitality.",
-        "tanglish": "Pulipani Siddhar rule padi, Sooriya Dasa-la leadership, recognition & govt/management support kedaikkum. Morning sunlight / Surya Namaskar energy tharum.",
+        "ta": "ஜோதிட விதிப்படி, சூரிய தசை அதிகாரம், அரசு உதவி மற்றும் தலைமைப் பண்பை உயர்த்தும். அதிகாலை சூரிய நமஸ்காரம் பலம் தரும்.",
+        "en": "In Vedic astrology, Sooriyan (Sun) Dasa strengthens leadership, recognition, and authority. Morning Surya Namaskar aligns your vitality.",
+        "tanglish": "Jothida rule padi, Sooriya Dasa-la leadership, recognition & govt/management support kedaikkum. Morning sunlight / Surya Namaskar energy tharum.",
     },
     "Moon": {
-        "ta": "புலிப்பாணி சித்தர் விதிப்படி, சந்திர தசை மன அமைதி, தாயார் ஆசி மற்றும் பயணங்களைத் தரும். பௌர்ணமி நாளில் அம்மன் வழிபாடு மன குழப்பத்தை நீக்கும்.",
-        "en": "Per Pulipani Siddhar, Chandran (Moon) Dasa activates intuition, emotional growth, travel, and family bonds. Full-moon prayers bring mental peace.",
-        "tanglish": "Pulipani Siddhar rule padi, Chandra Dasa-la intuition, travel & family bonding strong-aa irukkum. Pournami annaikku koil pona manasu calm aagum.",
+        "ta": "ஜோதிட விதிப்படி, சந்திர தசை மன அமைதி, தாயார் ஆசி மற்றும் பயணங்களைத் தரும். பௌர்ணமி நாளில் அம்மன் வழிபாடு மன குழப்பத்தை நீக்கும்.",
+        "en": "In Vedic astrology, Chandran (Moon) Dasa activates intuition, emotional growth, travel, and family bonds. Full-moon prayers bring mental peace.",
+        "tanglish": "Jothida rule padi, Chandra Dasa-la intuition, travel & family bonding strong-aa irukkum. Pournami annaikku koil pona manasu calm aagum.",
     },
     "Mars": {
-        "ta": "புலிப்பாணி சித்தர் ஜோதிடப்படி, செவ்வாய் தசை தைரியம், பூமி லாபம் மற்றும் வெற்றியைத் தரும்; கோபத்தைக் கட்டுப்படுத்த செவ்வாய்க்கிழமை முருகன் வழிபாடு நன்று.",
-        "en": "Per Pulipani Siddhar, Sevvai (Mars) Dasa gives courage, property gains, and bold action. Channel impatience through Tuesday Murugan prayers.",
-        "tanglish": "Pulipani Siddhar rule padi, Sevvai Dasa-la boldness, property/career jump varum—aana kovatha control pannanum. Tuesday Murugan prayer best pariharam.",
+        "ta": "ஜோதிட விதிப்படி, செவ்வாய் தசை தைரியம், பூமி லாபம் மற்றும் வெற்றியைத் தரும்; கோபத்தைக் கட்டுப்படுத்த செவ்வாய்க்கிழமை முருகன் வழிபாடு நன்று.",
+        "en": "In Vedic astrology, Sevvai (Mars) Dasa gives courage, property gains, and bold action. Channel impatience through Tuesday Murugan prayers.",
+        "tanglish": "Jothida rule padi, Sevvai Dasa-la boldness, property/career jump varum—aana kovatha control pannanum. Tuesday Murugan prayer best pariharam.",
     },
     "Rahu": {
-        "ta": "புலிப்பாணி சித்தர் விதிப்படி, ராகு தசை திடீர் மாற்றங்கள், வெளிநாட்டு வாய்ப்புகள் மற்றும் புதிய தொழில் வளர்ச்சியைத் தரும். துர்க்கை வழிபாடு தெளிவு தரும்.",
-        "en": "Per Pulipani Siddhar, Rahu Dasa triggers sudden breakthroughs, foreign opportunities, and unconventional growth. Durga prayers keep you grounded.",
-        "tanglish": "Pulipani Siddhar rule padi, Rahu Dasa-la sudden breakthroughs, abroad/tech chances varum—overthinking avoid panna Durga/Rahu kaalam lamp nalladhu.",
+        "ta": "ஜோதிட விதிப்படி, ராகு தசை திடீர் மாற்றங்கள், வெளிநாட்டு வாய்ப்புகள் மற்றும் புதிய தொழில் வளர்ச்சியைத் தரும். துர்க்கை வழிபாடு தெளிவு தரும்.",
+        "en": "In Vedic astrology, Rahu Dasa triggers sudden breakthroughs, foreign opportunities, and unconventional growth. Durga prayers keep you grounded.",
+        "tanglish": "Jothida rule padi, Rahu Dasa-la sudden breakthroughs, abroad/tech chances varum—overthinking avoid panna Durga/Rahu kaalam lamp nalladhu.",
     },
     "Ketu": {
-        "ta": "புலிப்பாணி சித்தர் வாக்குப்படி, கேது தசை ஆழ்ந்த ஞானம், ஆராய்ச்சி மற்றும் ஆன்மீகத் தெளிவைத் தரும். விநாயகர் வழிபாடு அனைத்துத் தடைகளையும் நீக்கும்.",
-        "en": "Per Pulipani Siddhar, Ketu Dasa deepens wisdom, research, and spiritual clarity while detaching you from toxic paths. Ganesha prayers remove obstacles.",
-        "tanglish": "Pulipani Siddhar rule padi, Ketu Dasa-la inner clarity, research/skill depth & detachment varum. Daily Vinayagar prayer ella hurdles-ayum clear pannum.",
+        "ta": "ஜோதிட விதிப்படி, கேது தசை ஆழ்ந்த ஞானம், ஆராய்ச்சி மற்றும் ஆன்மீகத் தெளிவைத் தரும். விநாயகர் வழிபாடு அனைத்துத் தடைகளையும் நீக்கும்.",
+        "en": "In Vedic astrology, Ketu Dasa deepens wisdom, research, and spiritual clarity while detaching you from toxic paths. Ganesha prayers remove obstacles.",
+        "tanglish": "Jothida rule padi, Ketu Dasa-la inner clarity, research/skill depth & detachment varum. Daily Vinayagar prayer ella hurdles-ayum clear pannum.",
     },
 }
 

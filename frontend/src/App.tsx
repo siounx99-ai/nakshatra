@@ -408,10 +408,10 @@ export function App() {
           <h1 className="text-2xl font-bold tracking-wide text-[#D4AF37]">நட்சத்திரம் · Nakshatra</h1>
           <p className="text-xs text-[#94A3B8] mt-1.5 text-center">
             {lang === 'ta'
-              ? 'உங்கள் தனிப்பட்ட தமிழ் ஜோதிடர் · புலிப்பாணி & பஞ்ச பட்சி'
+              ? 'உங்கள் தனிப்பட்ட தமிழ் ஜோதிடர் · ஜாதகம் & பஞ்ச பட்சி'
               : lang === 'en'
-              ? 'Your Personal Tamil Jothidar · Pulipani & Pancha Patchi'
-              : 'Unga Personal Tamil Jothidar · Pulipani & Pancha Patchi'}
+              ? 'Your Personal Tamil Jothidar · Jothidam & Pancha Patchi'
+              : 'Unga Personal Tamil Jothidar · Jothidam & Pancha Patchi'}
           </p>
 
           {/* 4-Second Progress Bar */}

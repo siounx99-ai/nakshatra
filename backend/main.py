@@ -1,4 +1,4 @@
-"""FastAPI backend for Enathu Jothidar — Personal Tamil Horoscope, Pancha Patchi & Pulipani Siddhar app."""
+"""FastAPI backend for Enathu Jothidar — Personal Tamil Horoscope, Pancha Patchi & Vedic Jothidam app."""
 
 from __future__ import annotations
 
@@ -166,7 +166,7 @@ class LeadRequest(BaseModel):
 def health():
     return {
         "status": "ok",
-        "engine": "pyswisseph + Pulipani Siddhar + Pancha Patchi",
+        "engine": "pyswisseph + Tamil Vedic Jothidam + Pancha Patchi",
         "storage": "firestore" if _firestore_db is not None else "local_json",
     }
 
