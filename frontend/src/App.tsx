@@ -32,7 +32,7 @@ import {
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
 const DEFAULT_PROFILE: SavedProfile = {
-  name: 'Karthik',
+  name: '',
   dob: '1998-05-14',
   tob: '06:30',
   city: 'Chennai',
