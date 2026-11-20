@@ -1014,7 +1014,10 @@ async def ask_personal_jothidar(
         patchi_summary = f"Pancha Patchi Bird: {pp['bird']['name']}, Current State: {pp['current']['label']}."
 
     lang_instruction = (
-        "Respond in respectful, warm Tamil script."
+        "Respond in simple, everyday, grammatically accurate Tamil script (எளிய இயல்பான தமிழ்) with zero spelling mistakes. "
+        "Use exact Tamil spellings: ஞாயிறு, திங்கள், செவ்வாய், புதன், வியாழன், வெள்ளி, சனி, சந்நிதி, கோவில், பரிகாரம், "
+        "தசை, புத்தி, அந்தரம், தசா சந்தி, நவாம்சம், லக்னம், ராசி, நட்சத்திரம், பஞ்ச பட்சி, சந்திராஷ்டமம், புலிப்பாணி சித்தர். "
+        "Avoid rare or archaic words; keep sentences short and natural."
         if lang == "ta"
         else "Respond in warm, clear English with Tamil astrology terms explained."
         if lang == "en"
@@ -1022,7 +1025,8 @@ async def ask_personal_jothidar(
     )
     system_prompt = (
         f"You are 'Enathu Jothidar' (Personal Tamil Astrologer) trained in Pulipani Siddhar Jothidam and Pancha Patchi Saasthiram. "
-        f"{lang_instruction} Keep your answer concise (4-6 sentences), practical, age-appropriate, and grounded ONLY in this chart & Pancha Patchi:\n"
+        f"{lang_instruction} Do NOT use markdown bold/italics (no ** or * or #). "
+        f"Keep your answer concise (4-5 sentences), practical, age-appropriate, and grounded ONLY in this chart & Pancha Patchi:\n"
         f"{chart_summary}\n{patchi_summary}"
     )
 
@@ -1038,12 +1042,13 @@ async def ask_personal_jothidar(
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": question},
                         ],
-                        "temperature": 0.6,
+                        "temperature": 0.3,
                     },
                 )
                 if resp.status_code == 200:
                     data = resp.json()
                     text = data["choices"][0]["message"]["content"]
+                    text = text.replace("**", "").replace("__", "").replace("### ", "").replace("## ", "")
                     return {"answer": text, "source": "deepseek"}
         except Exception:
             pass
@@ -1059,6 +1064,7 @@ async def ask_personal_jothidar(
                 if resp.status_code == 200:
                     data = resp.json()
                     text = data["candidates"][0]["content"]["parts"][0]["text"]
+                    text = text.replace("**", "").replace("__", "").replace("### ", "").replace("## ", "")
                     return {"answer": text, "source": "gemini"}
         except Exception:
             pass

@@ -429,26 +429,26 @@ export function App() {
       )}
 
       {/* Sticky Header */}
-      <header className="sticky top-0 z-30 backdrop-blur-md bg-[var(--bg-page)]/90 border-b border-[var(--border-gold)] px-4 py-3">
+      <header className="sticky top-0 z-30 backdrop-blur-md bg-[var(--bg-page)]/90 border-b border-[var(--border-gold)] px-3 py-2.5">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-full bg-[#0B0F19] border border-[#D4AF37]/70 flex items-center justify-center text-[#D4AF37] shadow-[0_0_14px_rgba(212,175,55,0.22)]">
-              <JothidamEmblem className="w-8 h-8" />
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-9 h-9 shrink-0 rounded-full bg-[#0B0F19] border border-[#D4AF37]/70 flex items-center justify-center text-[#D4AF37] shadow-[0_0_14px_rgba(212,175,55,0.22)]">
+              <JothidamEmblem className="w-7 h-7" />
             </div>
-            <div>
-              <h1 className="text-base font-bold leading-tight text-[var(--accent-gold)]">{t.appTitle}</h1>
-              <p className="text-[13px] text-[var(--text-muted)]">{t.appSubtitle}</p>
+            <div className="min-w-0">
+              <h1 className="text-sm font-bold leading-tight text-[var(--accent-gold)] truncate">{t.appTitle}</h1>
+              <p className="text-[11px] text-[var(--text-muted)] truncate">{t.appSubtitle}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 shrink-0">
             {/* 3-Way Language Toggle */}
-            <div className="flex rounded-lg p-0.5 cosmic-card text-[13px] font-medium">
+            <div className="flex rounded-lg p-0.5 cosmic-card text-[11px] font-medium">
               {(['ta', 'en', 'tanglish'] as Lang[]).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className={`px-2 py-1 rounded-md transition ${
+                  className={`px-1.5 py-1 rounded-md transition whitespace-nowrap ${
                     lang === l
                       ? 'bg-[#D4AF37] text-[#0B0F19] font-semibold'
                       : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -462,7 +462,7 @@ export function App() {
             {/* Theme Toggle */}
             <button
               onClick={() => setIvoryTheme(!ivoryTheme)}
-              className="p-2 rounded-lg cosmic-card text-[var(--accent-gold)]"
+              className="p-1.5 rounded-lg cosmic-card text-[var(--accent-gold)]"
               title="Toggle Midnight / Palm-Leaf Theme"
             >
               {ivoryTheme ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
