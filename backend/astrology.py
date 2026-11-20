@@ -1011,11 +1011,17 @@ async def ask_personal_jothidar(
     patchi_summary = ""
     if panchangam and panchangam.get("pancha_patchi"):
         pp = panchangam["pancha_patchi"]
-        patchi_summary = f"Pancha Patchi Bird: {pp['bird']['name']}, Current State: {pp['current']['label']}."
+        day_str = ", ".join(f"{j['start']}-{j['end']}:{j['state']}" for j in pp.get("day_jamams", []))
+        night_str = ", ".join(f"{j['start']}-{j['end']}:{j['state']}" for j in pp.get("night_jamams", []))
+        patchi_summary = (
+            f"Pancha Patchi Bird: {pp['bird']['name']}, Current State: {pp['current']['label']}. "
+            f"Day Jamams: [{day_str}]. Night Jamams: [{night_str}]."
+        )
 
     lang_instruction = (
         "Respond in simple, everyday, grammatically accurate Tamil script (எளிய இயல்பான தமிழ்) with zero spelling mistakes. "
         "Use exact Tamil spellings: ஞாயிறு, திங்கள், செவ்வாய், புதன், வியாழன், வெள்ளி, சனி, சந்நிதி, கோவில், பரிகாரம், "
+        "கோழி, மயில், ஆந்தை, காகம், வல்லூறு, அரசு, ஊண், நடை, துயில், சாவு, அமைப்பு, "
         "தசை, புத்தி, அந்தரம், தசா சந்தி, நவாம்சம், லக்னம், ராசி, நட்சத்திரம், பஞ்ச பட்சி, சந்திராஷ்டமம், புலிப்பாணி சித்தர். "
         "Avoid rare or archaic words; keep sentences short and natural."
         if lang == "ta"
@@ -1026,13 +1032,15 @@ async def ask_personal_jothidar(
     system_prompt = (
         f"You are 'Enathu Jothidar' (Personal Tamil Astrologer) trained in Pulipani Siddhar Jothidam and Pancha Patchi Saasthiram. "
         f"{lang_instruction} Do NOT use markdown bold/italics (no ** or * or #). "
-        f"Keep your answer concise (4-5 sentences), practical, age-appropriate, and grounded ONLY in this chart & Pancha Patchi:\n"
+        f"Directly answer the user's specific question (including any time/date/incident they mention) in 4-5 concise sentences, grounded ONLY in this chart & Pancha Patchi:\n"
         f"{chart_summary}\n{patchi_summary}"
     )
 
-    # DeepSeek is great for English & Tanglish, but hallucinates Tamil script words (e.g., கோழை/அமைசு).
-    # So for pure Tamil ('ta'), prefer Gemini if configured, otherwise use our verified Tamil engine.
-    if deepseek_key and lang != "ta" and (provider == "deepseek" or not gemini_key):
+    is_preset_ta = lang == "ta" and any(
+        p in question for p in ("தொழில் வளர்ச்சி எப்படி", "திருமண காலம் மற்றும் பொருத்தம்", "என்ன பரிகாரம் சிறந்தது")
+    )
+
+    if deepseek_key and not is_preset_ta and (provider == "deepseek" or not gemini_key):
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
                 resp = await client.post(
