@@ -1030,7 +1030,9 @@ async def ask_personal_jothidar(
         f"{chart_summary}\n{patchi_summary}"
     )
 
-    if deepseek_key and (provider == "deepseek" or not gemini_key):
+    # DeepSeek is great for English & Tanglish, but hallucinates Tamil script words (e.g., கோழை/அமைசு).
+    # So for pure Tamil ('ta'), prefer Gemini if configured, otherwise use our verified Tamil engine.
+    if deepseek_key and lang != "ta" and (provider == "deepseek" or not gemini_key):
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
                 resp = await client.post(
@@ -1079,11 +1081,22 @@ async def ask_personal_jothidar(
     patchi_cur = panchangam["pancha_patchi"]["current"] if panchangam else None
     bird_name = panchangam["pancha_patchi"]["bird"]["name"] if panchangam else "Mayil"
 
-    if any(w in q_low for w in ["job", "career", "work", "business", "money", "velai", "பணி", "வேலை", "தொழில்"]):
+    pariharam_txt = chart.get("pulipani_palangal", {}).get("pariharam", "") if chart else ""
+    career_txt = chart.get("pulipani_palangal", {}).get("career", "") if chart else ""
+    family_txt = chart.get("pulipani_palangal", {}).get("family", "") if chart else ""
+    nalla_neram = panchangam.get("nalla_neram", "") if panchangam else ""
+
+    if any(w in q_low for w in ["pariharam", "remedy", "temple", "koil", "பரிகாரம்", "வழிபாடு", "கோவில்"]):
         ans = {
-            "ta": f"{name}, உங்கள் {rasi} ராசி மற்றும் {nak} நட்சத்திரப்படி இப்போது {dasa} தசை நடக்கிறது. {pulipani} இன்று உங்கள் {bird_name} பட்சி '{patchi_cur['label'] if patchi_cur else 'நல்ல'}' நிலையில் உள்ளதால், முக்கிய வேலைகளை அரசு/ஊண் நேரத்தில் தொடங்குங்கள்.",
-            "en": f"{name}, for your {rasi} Rasi and {nak} star, you are currently in {dasa} Dasa. {pulipani} With your {bird_name} bird in '{patchi_cur['label'] if patchi_cur else 'active'}' state right now, schedule key career calls during your Arasu window.",
-            "tanglish": f"{name}, unga {rasi} Rasi & {nak} star padi ippo {dasa} Dasa nadakkudhu. {pulipani} Ippo unga {bird_name} patchi '{patchi_cur['label'] if patchi_cur else 'active'}' state-la irukku — important job/business calls-a Arasu/Oon window-la pannunga!",
+            "ta": f"வணக்கம் {name}! உங்கள் {rasi} ராசி ({nak}) மற்றும் {dasa} தசைப்படி: {pariharam_txt} இன்று உங்கள் {bird_name} பட்சி '{patchi_cur['label'] if patchi_cur else 'நல்ல'}' நிலையில் உள்ளது" + (f"; நல்ல நேரம்: {nalla_neram}." if nalla_neram else "."),
+            "en": f"Vanakkam {name}! For your {rasi} Rasi ({nak}) and {dasa} Dasa: {pariharam_txt} Your {bird_name} bird is in '{patchi_cur['label'] if patchi_cur else 'active'}' state today.",
+            "tanglish": f"Vanakkam {name}! Unga {rasi} Rasi ({nak}) & {dasa} Dasa padi: {pariharam_txt} Innaikku unga {bird_name} patchi '{patchi_cur['label'] if patchi_cur else 'active'}'-la irukku.",
+        }[lang]
+    elif any(w in q_low for w in ["job", "career", "work", "business", "money", "velai", "பணி", "வேலை", "தொழில்"]):
+        ans = {
+            "ta": f"{name}, உங்கள் {rasi} ராசி மற்றும் {nak} நட்சத்திரப்படி இப்போது {dasa} தசை நடக்கிறது. {career_txt or pulipani} இன்று உங்கள் {bird_name} பட்சி '{patchi_cur['label'] if patchi_cur else 'நல்ல'}' நிலையில் உள்ளதால், முக்கிய வேலைகளை அரசு/ஊண் நேரத்தில் தொடங்குங்கள்.",
+            "en": f"{name}, for your {rasi} Rasi and {nak} star, you are currently in {dasa} Dasa. {career_txt or pulipani} With your {bird_name} bird in '{patchi_cur['label'] if patchi_cur else 'active'}' state right now, schedule key career calls during your Arasu window.",
+            "tanglish": f"{name}, unga {rasi} Rasi & {nak} star padi ippo {dasa} Dasa nadakkudhu. {career_txt or pulipani} Ippo unga {bird_name} patchi '{patchi_cur['label'] if patchi_cur else 'active'}' state-la irukku — important job/business calls-a Arasu/Oon window-la pannunga!",
         }[lang]
     elif any(w in q_low for w in ["love", "marriage", "kalyanam", "partner", "porutham", "திருமணம்", "காதல்"]):
         dosham_note = (
@@ -1092,9 +1105,9 @@ async def ask_personal_jothidar(
             else ("பொருத்தம் பார்க்கும்போது ரஜ்ஜு மற்றும் தசா சந்தி முக்கியம்." if lang == "ta" else "Focus on Rajju and Dasa Sandhi when matching." if lang == "en" else "Porutham paakkumbodhu Rajju & Dasa Sandhi strong-aa irundha podhum!")
         )
         ans = {
-            "ta": f"{name}, உங்கள் {dasa} தசையில் உறவு மற்றும் திருமண விஷயங்களில் தெளிவு கிடைக்கும். {dosham_note} Porutham பகுதியில் உங்கள் 8-இலக்க குறியீட்டைப் பகிர்ந்து உடனே சரிபார்க்கலாம்.",
-            "en": f"{name}, your {dasa} Dasa shapes relationship clarity. {dosham_note} Use your 8-digit Jathagam Code in the Porutham tab to check compatibility instantly.",
-            "tanglish": f"{name}, ippo {dasa} Dasa nadakkuradhala relationship & marriage clarity nalla irukkum. {dosham_note} Unga 8-digit Jathagam Code-a Porutham tab-la use panni instant-aa match check pannikkalam.",
+            "ta": f"{name}, {family_txt} {dosham_note} Porutham பகுதியில் உங்கள் 8-இலக்க குறியீட்டைப் பகிர்ந்து உடனே சரிபார்க்கலாம்.",
+            "en": f"{name}, {family_txt} {dosham_note} Use your 8-digit Jathagam Code in the Porutham tab to check compatibility instantly.",
+            "tanglish": f"{name}, {family_txt} {dosham_note} Unga 8-digit Jathagam Code-a Porutham tab-la use panni instant-aa match check pannikkalam.",
         }[lang]
     else:
         ans = {
