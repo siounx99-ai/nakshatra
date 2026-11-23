@@ -1539,16 +1539,19 @@ export function App() {
               </button>
             </div>
 
-            <button
-              onClick={() => {
-                setLeadDone(false);
-                setLeadModal({ open: true, type: 'detailed_report_pdf' });
-              }}
-              className="w-full py-2.5 rounded-xl border border-emerald-500/50 text-emerald-400 font-semibold text-xs flex items-center justify-center gap-1.5"
-            >
-              <UserCheck className="w-4 h-4" />
-              {t.ctaCall}
-            </button>
+            {/* Temporarily hidden until Jothidar tie-up is finalized */}
+            {false && (
+              <button
+                onClick={() => {
+                  setLeadDone(false);
+                  setLeadModal({ open: true, type: 'detailed_report_pdf' });
+                }}
+                className="w-full py-2.5 rounded-xl border border-emerald-500/50 text-emerald-400 font-semibold text-xs flex items-center justify-center gap-1.5"
+              >
+                <UserCheck className="w-4 h-4" />
+                {t.ctaCall}
+              </button>
+            )}
             </section>
           </>
         )}
