@@ -112,6 +112,8 @@ export function App() {
   const [leadPhone, setLeadPhone] = useState('');
   const [leadNotes, setLeadNotes] = useState('');
   const [leadDone, setLeadDone] = useState(false);
+  const [leadLoading, setLeadLoading] = useState(false);
+  const [leadError, setLeadError] = useState('');
 
   const t = UI_COPY[lang];
 
@@ -354,19 +356,77 @@ export function App() {
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!leadName.trim() || !leadPhone.trim()) return;
-    await fetch(`${API_BASE}/api/leads`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: leadName,
-        phone: leadPhone,
-        request_type: leadModal.type,
-        notes: leadNotes,
-        chart_code: jathagam?.code || '',
-      }),
-    });
-    setLeadDone(true);
+    if (!leadName.trim() || !leadPhone.trim() || leadLoading) return;
+    setLeadError('');
+    setLeadLoading(true);
+    const leadPayload = {
+      name: leadName,
+      phone: leadPhone,
+      request_type: leadModal.type,
+      notes: leadNotes,
+      chart_code: jathagam?.code || '',
+    };
+    try {
+      const orderRes = await fetch(`${API_BASE}/api/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadPayload),
+      });
+      const orderData = await orderRes.json();
+      const RazorpayCtor = (window as unknown as { Razorpay?: new (opts: Record<string, unknown>) => { open: () => void; on: (ev: string, cb: () => void) => void } }).Razorpay;
+
+      if (orderRes.ok && orderData.configured && orderData.order_id && RazorpayCtor) {
+        const rzp = new RazorpayCtor({
+          key: orderData.key_id,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
+          name: 'Nakshatra · எனது ஜோதிடர்',
+          description: '20-Page Detailed Jathagam & Pariharam Report',
+          order_id: orderData.order_id,
+          prefill: { name: leadName, contact: leadPhone },
+          theme: { color: '#D4AF37' },
+          handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+            try {
+              const verifyRes = await fetch(`${API_BASE}/api/payment/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...leadPayload, ...response }),
+              });
+              if (verifyRes.ok) {
+                setLeadDone(true);
+              } else {
+                setLeadError('Payment verification failed. Please contact support.');
+              }
+            } catch {
+              setLeadError('Verification error. Please check your connection.');
+            } finally {
+              setLeadLoading(false);
+            }
+          },
+          modal: {
+            ondismiss: () => setLeadLoading(false),
+          },
+        });
+        rzp.on('payment.failed', () => {
+          setLeadError('Payment failed or cancelled. Please try again.');
+          setLeadLoading(false);
+        });
+        rzp.open();
+        return;
+      }
+
+      // Fallback if Razorpay keys are not configured on backend yet
+      await fetch(`${API_BASE}/api/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadPayload),
+      });
+      setLeadDone(true);
+    } catch {
+      setLeadError('Unable to initiate payment. Please try again.');
+    } finally {
+      setLeadLoading(false);
+    }
   };
 
   const shareWhatsApp = (text: string) => {
@@ -1556,11 +1616,13 @@ export function App() {
                   rows={2}
                   className="w-full px-3 py-2 rounded-xl cosmic-card-alt outline-none"
                 />
+                {leadError && <p className="text-[11px] text-rose-400">{leadError}</p>}
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0B0F19] font-bold"
+                  disabled={leadLoading}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0B0F19] font-bold disabled:opacity-60"
                 >
-                  {t.leadSubmit}
+                  {leadLoading ? '...' : t.leadSubmit}
                 </button>
               </form>
             )}

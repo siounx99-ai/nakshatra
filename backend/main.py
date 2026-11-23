@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import os
+import time
 from pathlib import Path
 from typing import Any, Dict, Optional
+
+import httpx
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -312,7 +317,86 @@ async def api_ask_jothidar(req: AskJothidarRequest):
     return await ask_personal_jothidar(req.question, req.chart, req.panchangam, lang=req.lang)
 
 
+class VerifyPaymentRequest(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    name: str
+    phone: str
+    request_type: str = "detailed_report_pdf"
+    notes: str = ""
+    chart_code: str = ""
+
+
 @app.post("/api/leads")
 def api_save_lead(req: LeadRequest):
     _save_lead(req.model_dump())
     return {"status": "saved", "message": "Request received! Our Tamil Jothidar team will reach out on WhatsApp."}
+
+
+@app.post("/api/payment/create-order")
+async def api_create_razorpay_order(req: LeadRequest):
+    key_id = os.getenv("RAZORPAY_KEY_ID", "").strip()
+    key_secret = os.getenv("RAZORPAY_KEY_SECRET", "").strip()
+    if not key_id or not key_secret:
+        return {"configured": False}
+
+    amount_paise = 9900  # ₹99 fixed server-side
+    receipt = f"nak_{int(time.time())}"
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.post(
+                "https://api.razorpay.com/v1/orders",
+                auth=(key_id, key_secret),
+                json={
+                    "amount": amount_paise,
+                    "currency": "INR",
+                    "receipt": receipt,
+                    "notes": {
+                        "name": req.name[:80],
+                        "phone": req.phone[:30],
+                        "request_type": req.request_type[:40],
+                        "chart_code": req.chart_code[:20],
+                    },
+                },
+            )
+        if resp.status_code not in (200, 201):
+            raise HTTPException(status_code=502, detail=f"Razorpay order error: {resp.text}")
+        order = resp.json()
+        return {
+            "configured": True,
+            "order_id": order["id"],
+            "amount": order["amount"],
+            "currency": order.get("currency", "INR"),
+            "key_id": key_id,
+        }
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Razorpay connection error: {type(exc).__name__}")
+
+
+@app.post("/api/payment/verify")
+def api_verify_razorpay_payment(req: VerifyPaymentRequest):
+    key_secret = os.getenv("RAZORPAY_KEY_SECRET", "").strip()
+    if not key_secret:
+        raise HTTPException(status_code=500, detail="Razorpay secret not configured")
+
+    payload = f"{req.razorpay_order_id}|{req.razorpay_payment_id}".encode("utf-8")
+    expected = hmac.new(key_secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(expected, req.razorpay_signature):
+        raise HTTPException(status_code=400, detail="Invalid payment signature")
+
+    _save_lead({
+        "name": req.name,
+        "phone": req.phone,
+        "request_type": req.request_type,
+        "notes": req.notes,
+        "chart_code": req.chart_code,
+        "payment_status": "paid",
+        "amount_inr": 99,
+        "razorpay_order_id": req.razorpay_order_id,
+        "razorpay_payment_id": req.razorpay_payment_id,
+        "paid_at_epoch": int(time.time()),
+    })
+    return {"verified": True, "payment_id": req.razorpay_payment_id}
