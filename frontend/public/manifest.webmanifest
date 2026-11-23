@@ -1,0 +1,25 @@
+{
+  "name": "Nakshatra · எனது ஜோதிடர்",
+  "short_name": "Nakshatra",
+  "description": "Personal Tamil Vedic Horoscope, Live Pancha Patchi, Porutham & Ask Jothidar",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0F19",
+  "theme_color": "#0B0F19",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
