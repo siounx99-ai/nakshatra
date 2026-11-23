@@ -1482,7 +1482,7 @@ export function App() {
             <button
               onClick={() => {
                 setLeadDone(false);
-                setLeadModal({ open: true, type: 'senior_jothidar_call' });
+                setLeadModal({ open: true, type: 'detailed_report_pdf' });
               }}
               className="w-full py-2.5 rounded-xl border border-emerald-500/50 text-emerald-400 font-semibold text-xs flex items-center justify-center gap-1.5"
             >
