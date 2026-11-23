@@ -115,6 +115,30 @@ export function App() {
   const [leadLoading, setLeadLoading] = useState(false);
   const [leadError, setLeadError] = useState('');
 
+  // Daily Ask Jothidar limit (3 questions per 24h IST day, no carry-forward)
+  const DAILY_ASK_LIMIT = 3;
+  const getTodayIst = () => {
+    const ist = new Date(Date.now() + 5.5 * 3600 * 1000);
+    return ist.toISOString().slice(0, 10);
+  };
+  const readAskRemaining = () => {
+    try {
+      const raw = localStorage.getItem('nk_ask_quota');
+      if (!raw) return DAILY_ASK_LIMIT;
+      const parsed = JSON.parse(raw) as { date?: string; used?: number };
+      if (parsed.date !== getTodayIst()) return DAILY_ASK_LIMIT;
+      return Math.max(0, DAILY_ASK_LIMIT - (parsed.used ?? 0));
+    } catch {
+      return DAILY_ASK_LIMIT;
+    }
+  };
+  const [askRemaining, setAskRemaining] = useState<number>(() => readAskRemaining());
+  const persistAskRemaining = (rem: number) => {
+    const clamped = Math.max(0, Math.min(DAILY_ASK_LIMIT, rem));
+    setAskRemaining(clamped);
+    localStorage.setItem('nk_ask_quota', JSON.stringify({ date: getTodayIst(), used: DAILY_ASK_LIMIT - clamped }));
+  };
+
   const t = UI_COPY[lang];
 
   useEffect(() => {
@@ -330,7 +354,19 @@ export function App() {
 
   const handleAskJothidar = async (customQ?: string) => {
     const q = (customQ ?? chatInput).trim();
-    if (!q) return;
+    if (!q || chatLoading) return;
+    const currentRem = readAskRemaining();
+    if (currentRem <= 0) {
+      setAskRemaining(0);
+      const limitMsg =
+        lang === 'ta'
+          ? `இன்றைய ${DAILY_ASK_LIMIT} இலவச கேள்விகள் முடிந்துவிட்டன. நாளை மீண்டும் புதிய ${DAILY_ASK_LIMIT} கேள்விகள் கேட்கலாம்.`
+          : lang === 'en'
+          ? `You have used all ${DAILY_ASK_LIMIT} questions for today. Your limit resets tomorrow (no carry-forward).`
+          : `Innaikku ${DAILY_ASK_LIMIT} free kelvigal mudinjiduchu. Naalaikku pudhu ${DAILY_ASK_LIMIT} kelvigal kekkalam.`;
+      setMessages((prev) => [...prev, { role: 'jothidar', text: limitMsg }]);
+      return;
+    }
     setMessages((prev) => [...prev, { role: 'user', text: q }]);
     if (!customQ) setChatInput('');
     setChatLoading(true);
@@ -346,6 +382,16 @@ export function App() {
         }),
       });
       const data = await res.json();
+      if (res.status === 429) {
+        persistAskRemaining(0);
+        setMessages((prev) => [...prev, { role: 'jothidar', text: data.detail || 'Daily limit reached.' }]);
+        return;
+      }
+      if (typeof data.remaining_today === 'number') {
+        persistAskRemaining(data.remaining_today);
+      } else {
+        persistAskRemaining(currentRem - 1);
+      }
       setMessages((prev) => [...prev, { role: 'jothidar', text: data.answer }]);
     } catch {
       setMessages((prev) => [...prev, { role: 'jothidar', text: 'Network error. Try again.' }]);
@@ -1490,12 +1536,23 @@ export function App() {
               {quickQuestions[lang].map((q) => (
                 <button
                   key={q}
+                  disabled={askRemaining <= 0 || chatLoading}
                   onClick={() => handleAskJothidar(q)}
-                  className="text-[13px] px-2.5 py-1.5 rounded-full cosmic-card-alt text-[var(--accent-gold)] border border-[var(--border-gold)] hover:bg-[#D4AF37]/15 text-left"
+                  className="text-[13px] px-2.5 py-1.5 rounded-full cosmic-card-alt text-[var(--accent-gold)] border border-[var(--border-gold)] hover:bg-[#D4AF37]/15 text-left disabled:opacity-50"
                 >
                   {q}
                 </button>
               ))}
+            </div>
+
+            <div className="flex items-center justify-between text-[11px] px-1">
+              <span className={askRemaining > 0 ? 'text-[var(--text-muted)]' : 'text-amber-400 font-semibold'}>
+                {lang === 'ta'
+                  ? `இன்று மீதம்: ${askRemaining} / ${DAILY_ASK_LIMIT} கேள்விகள் (தினமும் புதுப்பிக்கப்படும்)`
+                  : lang === 'en'
+                  ? `Today's limit: ${askRemaining} / ${DAILY_ASK_LIMIT} left (resets daily, no carry-forward)`
+                  : `Innaikku meedham: ${askRemaining} / ${DAILY_ASK_LIMIT} kelvigal (daily reset, no carry-forward)`}
+              </span>
             </div>
 
             {/* Chat Feed */}
@@ -1524,15 +1581,25 @@ export function App() {
 
             <div className="flex gap-2">
               <input
+                disabled={askRemaining <= 0 || chatLoading}
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAskJothidar()}
-                placeholder={t.askPlaceholder}
-                className="flex-1 px-3 py-2.5 rounded-xl cosmic-card-alt text-xs outline-none"
+                placeholder={
+                  askRemaining <= 0
+                    ? lang === 'ta'
+                      ? 'இன்றைய 3 கேள்விகள் முடிந்தன — நாளை கேளுங்கள்'
+                      : lang === 'en'
+                      ? 'Daily limit reached — resets tomorrow'
+                      : 'Innaikku 3 kelvigal mudinjiduchu — naalaikku kelunga'
+                    : t.askPlaceholder
+                }
+                className="flex-1 px-3 py-2.5 rounded-xl cosmic-card-alt text-xs outline-none disabled:opacity-50"
               />
               <button
+                disabled={askRemaining <= 0 || chatLoading}
                 onClick={() => handleAskJothidar()}
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0B0F19] font-bold text-xs flex items-center gap-1"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0B0F19] font-bold text-xs flex items-center gap-1 disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5" />
                 {t.sendBtn}

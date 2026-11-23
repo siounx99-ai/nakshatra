@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import hashlib
 import hmac
 import json
@@ -13,7 +14,7 @@ from typing import Any, Dict, Optional
 import httpx
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -312,9 +313,46 @@ def api_goal_check(req: GoalCheckRequest):
     return check_goal_alignment(req.goal_key, req.step_desc, req.chart, req.panchangam, lang=req.lang)
 
 
+MAX_DAILY_QUESTIONS = int(os.getenv("MAX_DAILY_QUESTIONS", "3"))
+_DAILY_ASK_USAGE: Dict[str, Dict[str, int]] = {}
+
+
+def _today_ist_str() -> str:
+    return (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5, minutes=30)).strftime("%Y-%m-%d")
+
+
 @app.post("/api/ask-jothidar")
-async def api_ask_jothidar(req: AskJothidarRequest):
-    return await ask_personal_jothidar(req.question, req.chart, req.panchangam, lang=req.lang)
+async def api_ask_jothidar(req: AskJothidarRequest, request: Request):
+    today = _today_ist_str()
+    # Keep only today's bucket (no carry-forward across days)
+    if list(_DAILY_ASK_USAGE.keys()) != [today]:
+        _DAILY_ASK_USAGE.clear()
+        _DAILY_ASK_USAGE[today] = {}
+
+    fwd = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+    client_ip = fwd or (request.client.host if request.client else "unknown")
+    chart_code = str((req.chart or {}).get("code", "")).strip()
+    user_key = f"code:{chart_code}" if chart_code else f"ip:{client_ip}"
+    ip_key = f"ip_cap:{client_ip}"
+
+    bucket = _DAILY_ASK_USAGE[today]
+    used = bucket.get(user_key, 0)
+    ip_used = bucket.get(ip_key, 0)
+
+    if used >= MAX_DAILY_QUESTIONS or ip_used >= (MAX_DAILY_QUESTIONS * 4):
+        limit_msg = {
+            "ta": f"இன்றைய {MAX_DAILY_QUESTIONS} இலவச கேள்விகள் முடிந்துவிட்டன. நாளை மீண்டும் புதிய {MAX_DAILY_QUESTIONS} கேள்விகள் கேட்கலாம்!",
+            "en": f"You have used all {MAX_DAILY_QUESTIONS} questions for today. Your daily limit resets tomorrow (no carry-forward).",
+            "tanglish": f"Innaikku {MAX_DAILY_QUESTIONS} free kelvigal mudinjiduchu. Naalaikku pudhu {MAX_DAILY_QUESTIONS} kelvigal kekkalam (no carry-forward).",
+        }.get(req.lang, f"Daily limit of {MAX_DAILY_QUESTIONS} questions reached.")
+        raise HTTPException(status_code=429, detail=limit_msg)
+
+    res = await ask_personal_jothidar(req.question, req.chart, req.panchangam, lang=req.lang)
+    bucket[user_key] = used + 1
+    bucket[ip_key] = ip_used + 1
+    res["remaining_today"] = max(0, MAX_DAILY_QUESTIONS - bucket[user_key])
+    res["daily_limit"] = MAX_DAILY_QUESTIONS
+    return res
 
 
 class VerifyPaymentRequest(BaseModel):
