@@ -29,7 +29,13 @@ import {
   type TabId,
 } from './types';
 
-const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+const isCapacitorRuntime =
+  typeof window !== 'undefined' &&
+  (window.location.protocol === 'capacitor:' ||
+    (window.location.hostname === 'localhost' && !window.location.port));
+const API_BASE = (
+  import.meta.env.VITE_API_URL || (isCapacitorRuntime ? 'https://nakshatra-plum.vercel.app' : '')
+).replace(/\/+$/, '');
 
 const DEFAULT_PROFILE: SavedProfile = {
   name: '',
