@@ -978,13 +978,20 @@ async def ask_personal_jothidar(
             f"Sevvai Dosham: {chart.get('sevvai_dosham')}."
         )
     patchi_summary = ""
+    now_ist = dt.datetime.now(dt.timezone(dt.timedelta(hours=5, minutes=30)))
+    now_str = now_ist.strftime("%A, %d %b %Y, %I:%M %p IST")
     if panchangam and panchangam.get("pancha_patchi"):
         pp = panchangam["pancha_patchi"]
-        day_str = ", ".join(f"{j['start']}-{j['end']}:{j['state']}" for j in pp.get("day_jamams", []))
-        night_str = ", ".join(f"{j['start']}-{j['end']}:{j['state']}" for j in pp.get("night_jamams", []))
+        cur = pp.get("current", {})
+        upcoming_list = pp.get("timeline", [])[1:]
+        upcoming_str = ", ".join(f"{j['start']}-{j['end']}:{j['state']}" for j in upcoming_list)
+        next_arasu = pp.get("next_arasu", {})
         patchi_summary = (
-            f"Pancha Patchi Bird: {pp['bird']['name']}, Current State: {pp['current']['label']}. "
-            f"Today Day Jamams: [{day_str}]. Today Night Jamams: [{night_str}]."
+            f"Current Local Time: {now_str}. "
+            f"Pancha Patchi Bird: {pp['bird']['name']}. "
+            f"ACTIVE RIGHT NOW: {cur.get('start', '')}-{cur.get('end', '')} -> {cur.get('state', '')} ({cur.get('label', '')}). "
+            f"UPCOMING Jamams (future only): [{upcoming_str}]. "
+            f"Next Peak (Arasu) Slot: {next_arasu.get('start', '')}-{next_arasu.get('end', '')}."
         )
 
         # If user asks about a specific weekday (e.g., Tuesday night), compute that exact weekday's Jamams!
@@ -1021,12 +1028,15 @@ async def ask_personal_jothidar(
         else "Respond in natural, friendly Tanglish (Tamil written in English letters) like a caring personal Tamil astrologer."
     )
     system_prompt = (
-        f"You are 'Enathu Jothidar', a warm, experienced human Tamil Jothidar grounded in traditional Tamil Vedic Astrology (Thirukanitha / Vakya principles) and Pancha Patchi Saasthiram. "
+        f"You are 'Enathu Jothidar', a warm, experienced human Tamil Jothidar sitting in front of the user right now, grounded in traditional Tamil Vedic Astrology and Pancha Patchi Saasthiram. "
         f"{lang_instruction} Do NOT use markdown bold/italics (no ** or * or #). "
-        f"CONVERSATION & ACCURACY RULES:\n"
-        f"- Answer ONLY what the user actually asked, naturally like a real Jothidar — do NOT dump their full Lagnam/Rasi/Nakshatram/Pancha Patchi timings unless directly needed for their question.\n"
+        f"CONVERSATION & REAL-JOTHIDAR RULES:\n"
+        f"- Speak directly for the EXACT time the user is asking about (right now: {now_str}, or the specific past/future time they mentioned). Give an immediate, clear verdict first (e.g. 'இப்போது 12:15 மணி, உங்கள் கோழி பட்சி ஊண் நிலையில் சுபமாக ஓடுகிறது — தாராளமாக இப்போதே செய்யலாம்!').\n"
+        f"- NEVER mention or warn about morning/earlier slots that have ALREADY PASSED today (unless the user explicitly asked about a past time).\n"
+        f"- NEVER repeat textbook definitions like 'அதாவது நல்ல பலம்', 'அதாவது மிக உயர்ந்த பலம்', 'அதாவது கவனம் தேவைப்படும் நேரம்'. Speak naturally like a human Jothidar, in 3-5 crisp sentences.\n"
+        f"- Answer ONLY what the user asked — do NOT add unasked 'ஒரு சிறு குறிப்பு' about Maha Dasa/Bhukti/Lagnam/Rasi when they only asked about timing for an action today. Only bring in Dasa/Bhukti when relevant to career, marriage, life phase, or remedies.\n"
         f"- When giving Pariharam, recommend well-established, traditional Tamil Navagraha / Vedic remedies (appropriate deity worship, temple darshan, lighting deepam on the planet's day, simple daanam/annadanam) aligned with the chart — NEVER invent fake temple locations or 'charity for a bird'.\n"
-        f"- Pancha Patchi states: Arasu = BEST/Peak power, Oon = GOOD/Productive, Nadai = Moderate/Neutral, Thuyil = Weak/Low energy, Saavu = CAUTION/Bad. Never say Arasu or Oon is bad.\n"
+        f"- Pancha Patchi states: Arasu = Peak/Best, Oon = Good/Productive, Nadai = Moderate, Thuyil = Low energy, Saavu = Caution/Avoid. Never say Arasu or Oon is bad.\n"
         f"- NEVER invent 'Dasa Sandhi' unless Maha Dasa ends within 6 months.\n"
         f"User Chart Context (use only what is relevant to the question):\n"
         f"{chart_summary}\n{patchi_summary}"
