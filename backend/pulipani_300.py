@@ -5,7 +5,7 @@ traditional Tamil Navagraha Pariharams (deity, day, lamp, daanam, temple)
 for all 9 planets when Maha Dasa or Bhukti lord is placed in 6, 8, or 12.
 """
 
-from typing import Dict
+from typing import Any, Dict
 
 # Standard Vedic Planetary Dignities (Rasi indices 0=Mesham .. 11=Meenam)
 PLANETARY_DIGNITY: Dict[str, Dict[str, list[int]]] = {
@@ -113,3 +113,220 @@ def select_pulipani_remedy(maha_key: str, maha_h: int, bhukti_key: str, bhukti_h
     if lang == "tanglish":
         return "Nadappu Dasa-Bhukti lords nalla house la irukradhala heavy Pariharam thevaiyillai; daily Kuladeivam vazhipaadu & annadanam podhum."
     return "Your active Dasa and Bhukti lords are well-placed, so no heavy Pariharam is needed; regular Kuladeivam prayer and Annadanam are sufficient."
+
+
+_CAREER_H_ADVICE: Dict[int, Dict[str, str]] = {
+    1: {
+        "ta": "சுய முயற்சியாலும் தனித்திறமையாலும் முன்னேறும் அமைப்பு. பிறரை நம்பி இருக்காமல் நீங்களே முன்னின்று செயல்பட்டால் தொழில் சிறக்கும்.",
+        "en": "Your career grows through self-effort and personal initiative. Taking ownership rather than waiting on others brings steady recognition.",
+        "tanglish": "Suya muyarchiyaala munnerram kedaikkum. Mathavangala nambi irukkaama neengale lead eduthaa career super-aa pogum.",
+    },
+    2: {
+        "ta": "பேச்சுத் திறமை, ஆலோசனை அல்லது நிதி சார்ந்த துறைகளில் நல்ல வருமானம் வரும். கடுமையான சொற்களைத் தவிர்த்து இனிமையாகப் பேசுவது பலம் தரும்.",
+        "en": "Communication, consulting, or finance-linked work suits you well. Calm, thoughtful speech protects your professional reputation.",
+        "tanglish": "Pechu thiramai, finance or consulting field nalla set aagum. Calm-aa & polite-aa pesinaale periya growth kedaikkum.",
+    },
+    3: {
+        "ta": "தொழிலில் துணிச்சலும் சிறு பயணங்களும் முன்னேற்றம் தரும். ஒரே இடத்தில் தேங்கி நிற்காமல் புதிய திறன்களைக் கற்றுக்கொள்வது நல்லது.",
+        "en": "Bold initiative, networking, and short trips drive progress. Keep upgrading your skills instead of staying in a comfort zone.",
+        "tanglish": "Bold steps & new skills kathukkuradhu career-ku periya boost tharum. Oru idathula stay pannaama puthu attempts pannunga.",
+    },
+    4: {
+        "ta": "நிலம், வாகனம், கல்வி அல்லது நிர்வாகத் துறையில் நிலையான வளர்ச்சி உண்டு. மன அமைதியைக் கெடுக்கும் வேலை அழுத்தத்தைத் தவிர்க்கவும்.",
+        "en": "Real estate, education, operations, or steady management roles favor you. Protect your mental peace from unnecessary work stress.",
+        "tanglish": "Management, property, education or stable role-la nalla growth irukku. Unnecessary work stress-a mind-la yethikkaadheenga.",
+    },
+    5: {
+        "ta": "அறிவுத்திறன், படைப்பாற்றல் மற்றும் வழிகாட்டும் பதவிகள் உங்களுக்கு ஏற்றவை. திட்டமிடாத ரிஸ்க் எடுப்பதைத் தவிர்த்து அனுபவத்தை நம்புங்கள்.",
+        "en": "Creative strategy, mentoring, and advisory roles fit your chart. Rely on proven experience rather than impulsive risks.",
+        "tanglish": "Creative thinking, mentoring & advisory roles ungalukku super-aa set aagum. Avathara risk edukkaama experience-a nambunga.",
+    },
+    6: {
+        "ta": "சேவை, டெக், நிர்வாகம் அல்லது போட்டி மிகுந்த துறையில் உங்கள் கடின உழைப்பே கைகொடுக்கும். அலுவலக வாக்குவாதங்களைத் தவிர்த்துப் பொறுமையாகச் செயல்பட்டால் வெற்றி நிச்சயம்.",
+        "en": "Service, tech, operations, or competitive fields reward your persistence. Avoid workplace friction and let consistent work speak for itself.",
+        "tanglish": "Service, tech or competitive field-la unga hard work dhaan ungalukku periya balam. Office arguments avoid panni porumaiyaa ponga, vetri nichayam.",
+    },
+    7: {
+        "ta": "கூட்டுத் தொழில், வாடிக்கையாளர் தொடர்பு மற்றும் வெளியூர் வாய்ப்புகள் நன்மை தரும். ஒப்பந்தங்களில் தெளிவான நிபந்தனைகளுடன் செயல்படுவது அவசியம்.",
+        "en": "Partnerships, client-facing roles, and external collaborations bring growth. Keep agreements clear and documented.",
+        "tanglish": "Partnership, client relations & outside opportunities nalla workout aagum. Agreements & commitments mattum clear-aa vachikonga.",
+    },
+    8: {
+        "ta": "ஆராய்ச்சி, ஆழமான தொழில்நுட்பம் அல்லது சவாலான பணிகளில் தனி முத்திரை பதிப்பீர்கள். திடீர் மாற்றங்களின்போது பதற்றப்படாமல் நிதானமாகத் திட்டமிடுங்கள்.",
+        "en": "Research, deep technical work, or problem-solving roles suit you. Stay calm during sudden shifts and avoid shortcuts.",
+        "tanglish": "Research, deep tech or problem-solving work-la shine aaguveenga. Sudden changes varumbodhu padhattam illaama calm-aa plan pannunga.",
+    },
+    9: {
+        "ta": "நல்ல வழிகாட்டிகள், உயர் கல்வி மற்றும் தூரத்து வாய்ப்புகள் மூலம் தொழில் உயரும். தர்மத்தையும் நேர்மையையும் கடைப்பிடித்தால் அதிர்ஷ்டம் துணை நிற்கும்.",
+        "en": "Mentors, higher learning, and long-distance opportunities uplift your career. Staying ethical keeps luck on your side.",
+        "tanglish": "Nalla mentors, higher knowledge & long-distance chances moolama career uyarum. Straightforward-aa irundhaa luck support pannum.",
+    },
+    10: {
+        "ta": "தொழில் ஸ்தானம் வலுவாக உள்ளது — பொறுப்பும் சமூக மதிப்பும் தானாகத் தேடி வரும். உயரத்தில் இருக்கும்போது பணிவுடன் நடப்பது நிலையான வெற்றியைத் தரும்.",
+        "en": "Your career house is well-supported, bringing authority and respect. Staying humble as responsibility grows secures lasting success.",
+        "tanglish": "Career sthanam romba strong-aa irukku — responsibility & respect thaanaa varum. Humble-aa irundhaa indha growth permanent-aa nikkum.",
+    },
+    11: {
+        "ta": "நண்பர்கள் மற்றும் நல்ல தொடர்புகள் வழியாகப் பல புதிய வாய்ப்புகள் வரும். ஒரே நேரத்தில் பல வேலைகளை இழுத்துப்போடாமல் முக்கியமானதில் கவனம் செலுத்துங்கள்.",
+        "en": "Strong networks and allies open multiple doors for income. Focus on your top priorities rather than scattering effort.",
+        "tanglish": "Friends & strong network moolama pudhu opportunities varum. Ellathayum ore nerathula pannaama mukkiyamaanadhula focus pannunga.",
+    },
+    12: {
+        "ta": "வெளிநாடு, தொலைதூர நிறுவனங்கள் அல்லது பின்னணியில் இருந்து இயங்கும் பணிகள் நன்மை தரும். தேவையற்ற கடன் மற்றும் ஆடம்பர முதலீடுகளைத் தவிர்ப்பது நல்லது.",
+        "en": "Global, remote, or behind-the-scenes work aligns well with your chart. Avoid unverified investments or heavy borrowing.",
+        "tanglish": "Foreign/remote/backend work ungalukku nalla suit aagum. Thevaiyillaadha kadan & risky investment avoid panradhu romba nalladhu.",
+    },
+}
+
+_PLANET_TONE: Dict[str, Dict[str, str]] = {
+    "Sun": {"ta": "தன்னம்பிக்கையும் தலைமைப் பண்பும்", "en": "confidence and leadership", "tanglish": "confidence & leadership"},
+    "Moon": {"ta": "மன அமைதியும் தெளிவான சிந்தனையும்", "en": "emotional clarity and calm focus", "tanglish": "manasu amaithi & clear thinking"},
+    "Mars": {"ta": "துணிச்சலும் வேகமான செயல்பாடும்", "en": "courage and decisive action", "tanglish": "dhairiyam & fast action"},
+    "Mercury": {"ta": "புத்திசாலித்தனமும் பேச்சுத் திறமையும்", "en": "sharp strategy and communication", "tanglish": "smart planning & communication"},
+    "Jupiter": {"ta": "நல்ல வழிகாட்டுதலும் சுப பலமும்", "en": "wisdom, mentorship, and grace", "tanglish": "nalla vazhikaattudhal & suba balam"},
+    "Venus": {"ta": "சுகமும் உறவு இனிமையும்", "en": "harmony, comfort, and goodwill", "tanglish": "harmony & comfort"},
+    "Saturn": {"ta": "பொறுமையும் நிலையான உழைப்பும்", "en": "discipline and steady endurance", "tanglish": "porumai & steady hard work"},
+    "Rahu": {"ta": "புதிய சிந்தனையும் எதிர்பாராத திருப்பங்களும்", "en": "unconventional breakthroughs", "tanglish": "puthu ideas & unexpected turns"},
+    "Ketu": {"ta": "ஆழ்ந்த சிந்தனையும் ஆன்மீகத் தெளிவும்", "en": "inner clarity and detachment", "tanglish": "inner clarity & detachment"},
+}
+
+
+def build_human_jothidar_palangal(
+    tenth_lord_h: int,
+    lagna_lord_h: int,
+    guru_h: int,
+    sani_h: int,
+    seventh_lord_h: int,
+    maha_key: str,
+    bhukti_key: str,
+    maha_h: int,
+    bhukti_h: int,
+    dignity: Dict[str, str],
+    dasa_info: Dict[str, Any],
+    lang: str = "ta",
+) -> Dict[str, str]:
+    """Generate warm, human Tamil Jothidar readings & practical advice (arivurai)."""
+    career_body = _CAREER_H_ADVICE.get(tenth_lord_h, _CAREER_H_ADVICE[10]).get(lang, _CAREER_H_ADVICE[10]["en"])
+    career = {
+        "ta": f"தொழில் வழிகாட்டல்: {career_body}",
+        "en": f"Career Guidance: {career_body}",
+        "tanglish": f"Career Vazhikaattal: {career_body}",
+    }[lang]
+
+    # Wealth advice tailored to Guru & Lagna lord placement
+    if guru_h == 7 or lagna_lord_h == 7:
+        wealth = {
+            "ta": "பொருளாதார அறிவுரை: வாழ்க்கைத் துணை அல்லது நம்பிக்கையான கூட்டாளியின் ஆலோசனையோடு எடுக்கும் நிதி முடிவுகள் கைகொடுக்கும். அவசர முதலீட்டைத் தவிர்த்து நிலையான சேமிப்பில் கவனம் செலுத்துங்கள்.",
+            "en": "Financial Advice: Financial decisions taken with your spouse or a trusted partner will pay off. Favor steady savings over rushed bets.",
+            "tanglish": "Money Arivurai: Spouse or trusted partner kitta discuss panni edukkuradhu nalla multi-gain tharum. Avathara investment avoid panni steady savings pannunga.",
+        }[lang]
+    elif guru_h in (2, 5, 9, 11) or lagna_lord_h in (1, 2, 5, 9, 11):
+        wealth = {
+            "ta": "பொருளாதார அறிவுரை: வருமானம் படிப்படியாக உயரும் அமைப்பு உள்ளது. பணம் வரும்போது ஒரு பகுதியை நிலையான சொத்து அல்லது பாதுகாப்பான சேமிப்பாக மாற்றி வைப்பது எதிர்காலத்திற்குப் பலம் தரும்.",
+            "en": "Financial Advice: Steady income flow is supported in your chart. Converting surplus into safe long-term assets protects future stability.",
+            "tanglish": "Money Arivurai: Income steady-aa grow aagum. Kaila varra panathula oru part-a safe long-term savings/asset-aa maathi vainga.",
+        }[lang]
+    else:
+        wealth = {
+            "ta": "பொருளாதார அறிவுரை: வரவுக்கு ஏற்ற செலவுத் திட்டமும் கடன் கட்டுப்பாடும் இந்தக் காலகட்டத்தில் மிக அவசியம். பிறருக்காக ஜாமீன் கையெழுத்து போடுவதைத் தவிர்க்கவும்.",
+            "en": "Financial Advice: Strict budgeting and debt control are essential. Avoid standing surety or lending casually without clear terms.",
+            "tanglish": "Money Arivurai: Expense control & budget romba mukkiyam. Mathavangalukku guarantee sign or casual loan kodukkuradha avoid pannunga.",
+        }[lang]
+
+    # Family advice tailored to 7th lord house
+    if seventh_lord_h in (1, 2, 4, 5, 7, 9, 11):
+        family = {
+            "ta": "குடும்ப அறிவுரை: குடும்பத்தினரின் அன்பும் துணைவரின் ஆதரவும் உங்கள் மன அழுத்தத்தைக் குறைக்கும். தினமும் சிறிது நேரமாவது குடும்பத்துடன் மனம் விட்டுப் பேசுவது வீட்டில் அமைதியைக் கூட்டும்.",
+            "en": "Family Advice: Warmth from your partner and family eases external stress. Carve out calm, unhurried time together each day.",
+            "tanglish": "Family Arivurai: Partner & family support unga stress-a kuraikkum. Daily konjam neram free-aa manasu vittu pesina veetla amaithi irukkum.",
+        }[lang]
+    else:
+        family = {
+            "ta": "குடும்ப அறிவுரை: குடும்பப் பொறுப்புகள் அதிகமாகத் தோன்றும் நேரங்களில் கோபத்தைத் தவிர்த்துக் காது கொடுத்துக் கேளுங்கள். சிறிய விட்டுக்கொடுத்தல் பெரிய மனக்கசப்பைத் தடுக்கும்.",
+            "en": "Family Advice: When responsibilities feel heavy, listen patiently before reacting. Small adjustments preserve deep peace at home.",
+            "tanglish": "Family Arivurai: Responsibilities adhigama theriyumbodhu kovam illaama calm-aa listen pannunga. Chinna adjustment periya peace tharum.",
+        }[lang]
+
+    # Dasa + Bhukti + House + Dignity reading
+    maha_tone = _PLANET_TONE.get(maha_key, _PLANET_TONE["Saturn"]).get(lang, "steady effort")
+    bhukti_tone = _PLANET_TONE.get(bhukti_key, _PLANET_TONE["Jupiter"]).get(lang, "guidance")
+    maha_name = dasa_info["maha_dasa"].get(lang, maha_key)
+    bhukti_name = dasa_info["bhukti"].get(lang, bhukti_key)
+    dasa_end = dasa_info["maha_end"]
+    anthar_name = dasa_info["anthar"].get(lang, "")
+    anthar_end = dasa_info["anthar_end"]
+
+    if maha_key == bhukti_key:
+        if maha_h in (6, 8, 12):
+            dasa_effect = {
+                "ta": (
+                    f"நடப்பு தசை வழிகாட்டல் ({maha_name} சுயபுத்தி): தசா நாதன் {maha_h}-ம் இடத்தில் ({dignity['label']}) இருப்பதால் "
+                    f"உழைப்பு அதிகமாக இருந்தாலும் {maha_tone} கைகொடுக்கும். {dasa_end} வரை அவசரப்படாமல் நிதானமாகச் செயல்படுங்கள்; "
+                    f"{anthar_name} அந்தரம் ({anthar_end} வரை) பொறுமையோடு திட்டமிட ஏற்ற நேரம்."
+                ),
+                "en": (
+                    f"Dasa Guidance ({maha_name} Swa-Bhukti): With your Dasa lord in H{maha_h} ({dignity['label']}), effort feels demanding yet builds {maha_tone}. "
+                    f"Stay patient and steady till {dasa_end} (Anthar: {anthar_name} till {anthar_end})."
+                ),
+                "tanglish": (
+                    f"Dasa Vazhikaattal ({maha_name} Swa-Bhukti): Dasa lord H{maha_h}-la ({dignity['label']}) irukkuradhala uzhaippu adhigama irundhaalum {maha_tone} kaikkodukkum. "
+                    f"{dasa_end} varaikum avasara padama nidhaanamaa ponga (Anthar: {anthar_name} till {anthar_end})."
+                ),
+            }[lang]
+        else:
+            dasa_effect = {
+                "ta": (
+                    f"நடப்பு தசை வழிகாட்டல் ({maha_name} சுயபுத்தி): தசா நாதன் {maha_h}-ம் இடத்தில் ({dignity['label']}) நல்ல பலத்துடன் உள்ளார். "
+                    f"{maha_tone} மூலம் {dasa_end} வரை நல்ல முன்னேற்றம் தரும்; "
+                    f"{anthar_name} அந்தரம் ({anthar_end} வரை) புதிய முயற்சிகளுக்குத் துணை நிற்கும்."
+                ),
+                "en": (
+                    f"Dasa Guidance ({maha_name} Swa-Bhukti): Your Dasa lord sits well in H{maha_h} ({dignity['label']}), "
+                    f"bringing {maha_tone} for steady progress till {dasa_end} (Anthar: {anthar_name} till {anthar_end})."
+                ),
+                "tanglish": (
+                    f"Dasa Vazhikaattal ({maha_name} Swa-Bhukti): Dasa lord H{maha_h}-la ({dignity['label']}) nalla balathoda irukku. "
+                    f"{maha_tone} moolama {dasa_end} varaikum nalla progress tharum (Anthar: {anthar_name} till {anthar_end})."
+                ),
+            }[lang]
+    elif maha_h in (6, 8, 12):
+        dasa_effect = {
+            "ta": (
+                f"நடப்பு தசை வழிகாட்டல் ({maha_name} → {bhukti_name}): தசா நாதன் {maha_h}-ம் இடத்தில் ({dignity['label']}) இருப்பதால் "
+                f"உழைப்பு அதிகமாக இருந்தாலும் {maha_tone} கைகொடுக்கும். {bhukti_name} புத்தி ({dasa_end} வரை) {bhukti_tone} தந்து "
+                f"தடைகளிலிருந்து மீட்கும்; {anthar_name} அந்தரம் {anthar_end} வரை நிதானமாகச் செயல்படுங்கள்."
+            ),
+            "en": (
+                f"Dasa Guidance ({maha_name} → {bhukti_name}): With your Dasa lord in H{maha_h} ({dignity['label']}), effort feels demanding yet builds {maha_tone}. "
+                f"{bhukti_name} Bhukti (till {dasa_end}) brings {bhukti_tone} to clear hurdles; stay steady through {anthar_name} Anthar till {anthar_end}."
+            ),
+            "tanglish": (
+                f"Dasa Vazhikaattal ({maha_name} → {bhukti_name}): Dasa lord H{maha_h}-la ({dignity['label']}) irukkuradhala uzhaippu adhigama irundhaalum {maha_tone} kaikkodukkum. "
+                f"{bhukti_name} Bhukti ({dasa_end} varaikum) {bhukti_tone} thandhu thadaigala clear pannum; {anthar_name} Anthar ({anthar_end}) varaikum nidhaanamaa irunga."
+            ),
+        }[lang]
+    else:
+        dasa_effect = {
+            "ta": (
+                f"நடப்பு தசை வழிகாட்டல் ({maha_name} → {bhukti_name}): தசா நாதன் {maha_h}-ம் இடத்தில் ({dignity['label']}) நல்ல பலத்துடன் உள்ளார். "
+                f"{maha_tone} மற்றும் {bhukti_name} புத்தியின் {bhukti_tone} இணைந்து {dasa_end} வரை நல்ல முன்னேற்றத்தைத் தரும்; "
+                f"{anthar_name} அந்தரம் ({anthar_end} வரை) புதிய முயற்சிகளுக்குத் துணை நிற்கும்."
+            ),
+            "en": (
+                f"Dasa Guidance ({maha_name} → {bhukti_name}): Your Dasa lord sits well in H{maha_h} ({dignity['label']}). "
+                f"{maha_tone} paired with {bhukti_name} Bhukti's {bhukti_tone} supports steady progress till {dasa_end} (Anthar: {anthar_name} till {anthar_end})."
+            ),
+            "tanglish": (
+                f"Dasa Vazhikaattal ({maha_name} → {bhukti_name}): Dasa lord H{maha_h}-la ({dignity['label']}) nalla balathoda irukku. "
+                f"{maha_tone} + {bhukti_name} Bhukti-oda {bhukti_tone} serndhu {dasa_end} varaikum nalla progress tharum (Anthar: {anthar_name} till {anthar_end})."
+            ),
+        }[lang]
+
+    pariharam = select_pulipani_remedy(maha_key, maha_h, bhukti_key, bhukti_h, lang)
+    return {
+        "career": career,
+        "wealth": wealth,
+        "family": family,
+        "dasa_effect": dasa_effect,
+        "pariharam": pariharam,
+    }

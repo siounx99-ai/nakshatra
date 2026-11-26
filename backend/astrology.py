@@ -26,7 +26,7 @@ from astrology_data import (
     WEEKDAY_BIRD_OFFSET_VALAR_DAY,
     WEEKDAY_BIRD_OFFSET_VALAR_NIGHT,
 )
-from pulipani_300 import get_pulipani_dignity, select_pulipani_remedy
+from pulipani_300 import build_human_jothidar_palangal, get_pulipani_dignity, select_pulipani_remedy
 
 AYANAMSA_MAP = {
     "lahiri": swe.SIDM_LAHIRI,
@@ -628,92 +628,24 @@ def _compute_pulipani_palangal(
     bhukti_key = dasa_info["bhukti"]["key"]
     maha_h = pos.get(maha_key, 1)
 
-    if age_years < 25:
-        stage_ta, stage_en, stage_tg = (
-            f"உங்கள் {age_years} வயதில் கல்வி மற்றும் அடித்தளத் திறனை வலுப்படுத்தும் காலம்",
-            f"At age {age_years}, focus on building core skills and early career momentum",
-            f"Unga {age_years} age-la strong skill foundation & early career growth phase",
-        )
-    elif age_years < 35:
-        stage_ta, stage_en, stage_tg = (
-            f"உங்கள் {age_years} வயதில் தொழில் வளர்ச்சி மற்றும் சுய நிலைப்பாடு பெறும் காலம்",
-            f"At age {age_years}, this is your prime expansion and career-building phase",
-            f"Unga {age_years} age-la career jump, growth & settling down phase",
-        )
-    elif age_years < 50:
-        stage_ta, stage_en, stage_tg = (
-            f"உங்கள் {age_years} வயதில் அனுபவத்தை அதிகாரமாகவும் நிலையான சொத்தாகவும் மாற்றும் பருவம்",
-            f"At age {age_years}, your chart favors leadership, consolidation, and scaling authority",
-            f"Unga {age_years} age-la experience-a authority, business scale & solid assets-aa maathura phase",
-        )
-    else:
-        stage_ta, stage_en, stage_tg = (
-            f"உங்கள் {age_years} வயதில் வழிகாட்டுதல், மன அமைதி மற்றும் நிலைத்த சொத்துப் பாதுகாப்பு காலம்",
-            f"At age {age_years}, focus on mentorship, wealth preservation, and peaceful balance",
-            f"Unga {age_years} age-la mentorship, asset protection & peaceful stability phase",
-        )
-
-    # 1. Career & Authority Palan (Age-Aware)
-    if tenth_lord_h in (1, 4, 5, 7, 9, 10, 11):
-        career = {
-            "ta": f"தொழில் பலன்: 10-ம் அதிபதி ({tenth_lord}) {tenth_lord_h}-ம் இடத்தில் வலுவாக உள்ளார் — {stage_ta}; பதவி உயர்வு மற்றும் சமூக மதிப்பு கிடைக்கும்.",
-            "en": f"Career Palan: 10th lord ({tenth_lord}) in H{tenth_lord_h} is strong — {stage_en} with leadership respect.",
-            "tanglish": f"Career Palan: 10th lord ({tenth_lord}) H{tenth_lord_h}-la strong — {stage_tg}; promotion & recognition kedaikkum.",
-        }[lang]
-    else:
-        career = {
-            "ta": f"தொழில் பலன்: 10-ம் அதிபதி {tenth_lord_h}-ம் இடத்தில் உள்ளதால் {stage_ta}; போட்டி மற்றும் உழைப்புக்குப் பிறகே உறுதியான வெற்றி கைகூடும்.",
-            "en": f"Career Palan: 10th lord in H{tenth_lord_h} — {stage_en}; steady persistence and smart delegation turn competition into lasting wins.",
-            "tanglish": f"Career Palan: 10th lord H{tenth_lord_h}-la irukku — {stage_tg}; competition-a smart work & persistence moolama win pannuveenga.",
-        }[lang]
-
-    # 2. Wealth & Dhanayoga Palan (Age-Aware)
-    if guru_h in (1, 2, 5, 7, 9, 11) or lagna_lord_h in (1, 2, 5, 9, 11):
-        wealth = {
-            "ta": f"செல்வ யோகம் ({age_years} வயது): லக்னாதிபதி {lagna_lord_h}-ம் இடத்திலும் குரு {guru_h}-ம் இடத்திலும் இருப்பதால் சொத்து, சேமிப்பு மற்றும் பலவழி வருமானம் சிறக்கும்.",
-            "en": f"Wealth Palan (Age {age_years}): Lagna lord in H{lagna_lord_h} and Guru in H{guru_h} support assets, savings, and multi-source income.",
-            "tanglish": f"Wealth Palan (Age {age_years}): Lagnathipathi H{lagna_lord_h} & Guru H{guru_h} support nalla irukku — assets & steady savings grow aagum.",
-        }[lang]
-    else:
-        wealth = {
-            "ta": f"செல்வ பலன் ({age_years} வயது): குரு {guru_h}-ம் இடத்திலும் சனி {sani_h}-ம் இடத்திலும் உள்ளதால் திட்டமிட்ட முதலீடும் கடன் கட்டுப்பாடும் செல்வத்தை நிலைநிறுத்தும்.",
-            "en": f"Wealth Palan (Age {age_years}): With Guru in H{guru_h} and Sani in H{sani_h}, structured investments and debt control protect wealth.",
-            "tanglish": f"Wealth Palan (Age {age_years}): Guru H{guru_h} & Sani H{sani_h} padi structured investment & expense control pannaa wealth strong-aa irukkum.",
-        }[lang]
-
-    # 3. Family & Relationship Palan (Age-Aware)
-    if seventh_lord_h in (1, 2, 4, 5, 7, 9, 11):
-        family = {
-            "ta": f"குடும்ப பலன் ({age_years} வயது): 7-ம் அதிபதி {seventh_lord_h}-ம் இடத்தில் இருப்பதால் குடும்ப ஒற்றுமை, துணைவர் ஆதரவு மற்றும் சுப காரியங்கள் சிறப்பாக அமையும்.",
-            "en": f"Family Palan (Age {age_years}): 7th lord in H{seventh_lord_h} brings partner support, family harmony, and auspicious milestones.",
-            "tanglish": f"Family Palan (Age {age_years}): 7th lord H{seventh_lord_h}-la irukkuradhala partner support & family harmony nalla irukkum.",
-        }[lang]
-    else:
-        family = {
-            "ta": f"குடும்ப பலன் ({age_years} வயது): 7-ம் அதிபதி {seventh_lord_h}-ம் இடத்தில் உள்ளதால் குடும்பப் பொறுப்புகளில் நிதானமும் வெளிப்படையான பேச்சும் மகிழ்ச்சி தரும்.",
-            "en": f"Family Palan (Age {age_years}): 7th lord in H{seventh_lord_h} rewards calm listening and balanced work-family time.",
-            "tanglish": f"Family Palan (Age {age_years}): 7th lord H{seventh_lord_h}-la irukku — family responsibilities-la calm-aa & open-aa pesina smooth-aa irukkum.",
-        }[lang]
-
-    # 4. Active Dasa-Bhukti Palan (with verified Pulipani 300 planetary dignity)
     maha_rasi_idx = next((g["rasi_idx"] for g in grahas if g["key"] == maha_key), lagnam_idx)
     dignity = get_pulipani_dignity(maha_key, maha_rasi_idx, lang)
-    dasa_effect = {
-        "ta": f"நடப்பு தசை பலன் ({dasa_info['maha_dasa']['ta']} → {dasa_info['bhukti']['ta']}): தசா நாதன் உங்கள் ஜாதகத்தில் {maha_h}-ம் இடத்தில் ({dignity['label']}) உள்ளதால் {dasa_info['maha_end']} வரை முக்கிய மாற்றங்களும் பொறுப்புகளும் வரும்.",
-        "en": f"Active Dasa Palan ({dasa_info['maha_dasa']['en']} → {dasa_info['bhukti']['en']}): Your Dasa lord sits in natal H{maha_h} ({dignity['label']}), driving key shifts in {bhukti_key} themes until {dasa_info['maha_end']}.",
-        "tanglish": f"Active Dasa Palan ({dasa_info['maha_dasa']['tanglish']} → {dasa_info['bhukti']['tanglish']}): Dasa lord natal H{maha_h}-la ({dignity['label']}) irukkuradhala {dasa_info['maha_end']} varaikum puthu responsibilities & turning points varum.",
-    }[lang]
-
     bhukti_h = pos.get(bhukti_key, 1)
-    pariharam = select_pulipani_remedy(maha_key, maha_h, bhukti_key, bhukti_h, lang)
 
-    return {
-        "career": career,
-        "wealth": wealth,
-        "family": family,
-        "dasa_effect": dasa_effect,
-        "pariharam": pariharam,
-    }
+    return build_human_jothidar_palangal(
+        tenth_lord_h=tenth_lord_h,
+        lagna_lord_h=lagna_lord_h,
+        guru_h=guru_h,
+        sani_h=sani_h,
+        seventh_lord_h=seventh_lord_h,
+        maha_key=maha_key,
+        bhukti_key=bhukti_key,
+        maha_h=maha_h,
+        bhukti_h=bhukti_h,
+        dignity=dignity,
+        dasa_info=dasa_info,
+        lang=lang,
+    )
 
 
 def calculate_jathagam(
@@ -969,13 +901,20 @@ async def ask_personal_jothidar(
 
     chart_summary = ""
     if chart:
+        lag_idx = chart.get("lagnam", {}).get("idx", 0)
+        graha_houses = ", ".join(
+            f"{g['key']}:H{((g['rasi_idx'] - lag_idx) % 12) + 1}"
+            for g in chart.get("grahas", [])
+        )
         chart_summary = (
             f"User: {chart.get('name', 'Friend')}, Age: {chart.get('age', '')}, "
             f"Lagnam: {chart.get('lagnam', {}).get('name')}, "
             f"Rasi: {chart.get('rasi', {}).get('name')}, Nakshatram: {chart.get('nakshatram', {}).get('name')}, "
             f"Maha Dasa: {chart.get('dasa', {}).get('maha')} (till {chart.get('dasa', {}).get('maha_end')}), "
             f"Bhukti: {chart.get('dasa', {}).get('bhukti')} (till {chart.get('dasa', {}).get('bhukti_end')}), "
-            f"Sevvai Dosham: {chart.get('sevvai_dosham')}."
+            f"Anthar: {chart.get('dasa', {}).get('anthar')} (till {chart.get('dasa', {}).get('anthar_end')}), "
+            f"Sevvai Dosham: {chart.get('sevvai_dosham')}, "
+            f"Planet Houses from Lagnam: [{graha_houses}]."
         )
     patchi_summary = ""
     now_ist = dt.datetime.now(dt.timezone(dt.timedelta(hours=5, minutes=30)))
@@ -1031,6 +970,7 @@ async def ask_personal_jothidar(
         f"You are 'Enathu Jothidar', a warm, experienced human Tamil Jothidar sitting in front of the user right now, grounded in traditional Tamil Vedic Astrology and Pancha Patchi Saasthiram. "
         f"{lang_instruction} Do NOT use markdown bold/italics (no ** or * or #). "
         f"CONVERSATION & REAL-JOTHIDAR RULES:\n"
+        f"- Speak like a wise, caring, experienced human Tamil Jothidar giving genuine life advice (அறிவுரை) — warm, calm, reassuring, and practical, NEVER like a robot or textbook.\n"
         f"- Speak directly for the EXACT time the user is asking about (right now: {now_str}, or the specific past/future time they mentioned). Give an immediate, clear verdict first (e.g. 'இப்போது 12:15 மணி, உங்கள் கோழி பட்சி ஊண் நிலையில் சுபமாக ஓடுகிறது — தாராளமாக இப்போதே செய்யலாம்!').\n"
         f"- NEVER mention or warn about morning/earlier slots that have ALREADY PASSED today (unless the user explicitly asked about a past time).\n"
         f"- NEVER repeat textbook definitions like 'அதாவது நல்ல பலம்', 'அதாவது மிக உயர்ந்த பலம்', 'அதாவது கவனம் தேவைப்படும் நேரம்'. Speak naturally like a human Jothidar, in 3-5 crisp sentences.\n"
